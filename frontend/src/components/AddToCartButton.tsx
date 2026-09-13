@@ -13,6 +13,7 @@ import { FaMinus } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { RootState } from "@/redux/store";
+import { useRouter } from "next/navigation";
 import {
   useAddToCartBackendMutation,
   useUpdateCartQuantityMutation,
@@ -24,6 +25,7 @@ interface PropsType {
 }
 
 const AddToCartButton = ({ product, className }: PropsType) => {
+  const router = useRouter();
   const { cart } = useSelector((state: StateType) => state?.shopy);
   const token = useSelector((state: RootState) => state.auth?.token);
   const [existingProduct, setExistingProduct] = useState<ProductType | null>(
@@ -43,6 +45,12 @@ const AddToCartButton = ({ product, className }: PropsType) => {
   }, [cart, product]);
 
   const handleAddToCart = async () => {
+    if (!token) {
+      toast.error("Please login to add items to your cart");
+      router.push("/login?callbackUrl=/cart");
+      return;
+    }
+
     if (product) {
       dispatch(addToCart(product));
       toast.success(
@@ -63,6 +71,12 @@ const AddToCartButton = ({ product, className }: PropsType) => {
   };
 
   const handleAdd = async () => {
+    if (!token) {
+      toast.error("Please login to manage your cart");
+      router.push("/login?callbackUrl=/cart");
+      return;
+    }
+
     if (!product) return;
     dispatch(increaseQuantity(product?.id));
     toast.success(

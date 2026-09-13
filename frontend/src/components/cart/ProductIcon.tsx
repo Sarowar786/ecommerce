@@ -7,6 +7,8 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { ProductType, StateType } from "../../../type";
 import { addToFavorite } from "@/redux/shofySlice";
+import { RootState } from "@/redux/store";
+import { useRouter } from "next/navigation";
 
 interface Props {
   discountPercentage: number;
@@ -14,6 +16,8 @@ interface Props {
 }
 
 const ProductIcon = ({ discountPercentage, product }: Props) => {
+  const router = useRouter();
+  const token = useSelector((state: RootState) => state.auth?.token);
   const { favoriteProduct } = useSelector((state: StateType) => state?.shopy);
   const dispatch = useDispatch();
 
@@ -34,6 +38,12 @@ const ProductIcon = ({ discountPercentage, product }: Props) => {
     e: React.MouseEvent<HTMLSpanElement>
   ) => {
     e.preventDefault();
+
+    if (!token) {
+      toast.error("Please login to save items to your wishlist");
+      router.push("/login?callbackUrl=/favorite");
+      return;
+    }
 
     dispatch(addToFavorite(product));
     toast.success(

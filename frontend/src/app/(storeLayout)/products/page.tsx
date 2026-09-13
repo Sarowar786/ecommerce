@@ -229,8 +229,8 @@ export default function ProductsCatalogPage() {
 
             {/* Skeleton Loading */}
             {isLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                {Array.from({ length: 12 }).map((_, i) => (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+                {Array.from({ length: 6 }).map((_, i) => (
                   <div
                     key={i}
                     className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3 animate-pulse"
@@ -263,7 +263,7 @@ export default function ProductsCatalogPage() {
             ) : (
               /* Product Grid */
               <div
-                className={`grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 transition-opacity duration-200 ${
+                className={`grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 transition-opacity duration-200 ${
                   isFetching ? "opacity-60 pointer-events-none" : "opacity-100"
                 }`}
               >

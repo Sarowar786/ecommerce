@@ -46,7 +46,7 @@ function LoginForm() {
   const router = useRouter();
 
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const callbackUrl = searchParams.get("callbackUrl") || searchParams.get("redirect") || "/";
 
   const onSubmit = async (data: FieldValues) => {
     const payload = {
@@ -70,11 +70,12 @@ function LoginForm() {
 
         const role = String(user?.role || "").toUpperCase();
         if (role === "ADMIN" || role === "SUPER_ADMIN") {
-          router.push("/dashboard");
+          const target = callbackUrl.startsWith("/dashboard") ? callbackUrl : "/dashboard";
+          router.push(target);
         } else {
-          // Customer user directly goes to store homepage
+          // Regular customer user
           const target =
-            callbackUrl && callbackUrl !== "/dashboard" ? callbackUrl : "/";
+            callbackUrl && !callbackUrl.startsWith("/dashboard") ? callbackUrl : "/";
           router.push(target);
         }
         return;

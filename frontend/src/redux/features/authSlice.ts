@@ -55,6 +55,7 @@ const authSlice = createSlice({
       Cookies.set("accessToken", action.payload.token, { expires: 7 });
       if (action.payload.user) {
         state.user = action.payload.user;
+        Cookies.set("user_role", action.payload.user.role, { expires: 7 });
         if (typeof window !== "undefined") {
           localStorage.setItem("user_info", JSON.stringify(action.payload.user));
         }
@@ -62,6 +63,11 @@ const authSlice = createSlice({
     },
     setUserInfo: (state, action: PayloadAction<UserInfo | null>) => {
       state.user = action.payload;
+      if (action.payload?.role) {
+        Cookies.set("user_role", action.payload.role, { expires: 7 });
+      } else {
+        Cookies.remove("user_role");
+      }
       if (typeof window !== "undefined") {
         if (action.payload) {
           localStorage.setItem("user_info", JSON.stringify(action.payload));
@@ -83,6 +89,7 @@ const authSlice = createSlice({
       state.user = null;
       Cookies.remove("accessToken");
       Cookies.remove("refreshToken");
+      Cookies.remove("user_role");
       if (typeof window !== "undefined") {
         localStorage.removeItem("user_info");
       }

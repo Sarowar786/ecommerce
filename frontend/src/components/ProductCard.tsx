@@ -8,6 +8,7 @@ import { FiShoppingCart } from "react-icons/fi";
 import { LuEye } from "react-icons/lu";
 import AddToCartButton from "./AddToCartButton";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import ProductPrice from "./ProductPrice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
@@ -31,6 +32,8 @@ const SideBar = ({ product }: { product: ProductType }) => {
   const [toggleWishlistApi] = useToggleWishlistMutation();
   const [addToCartBackend] = useAddToCartBackendMutation();
 
+  const router = useRouter();
+
   const isFavorite = favoriteProduct?.some(
     (item: ProductType) => item?.id === product?.id
   );
@@ -38,6 +41,12 @@ const SideBar = ({ product }: { product: ProductType }) => {
   const handleFavoriteToggle = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+
+    if (!token) {
+      toast.error("Please login to save items to your wishlist");
+      router.push("/login?callbackUrl=/favorite");
+      return;
+    }
 
     dispatch(addToFavorite(product));
     if (isFavorite) {
@@ -58,6 +67,12 @@ const SideBar = ({ product }: { product: ProductType }) => {
   const handleQuickCart = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+
+    if (!token) {
+      toast.error("Please login to add items to your cart");
+      router.push("/login?callbackUrl=/cart");
+      return;
+    }
 
     dispatch(addToCart(product));
     toast.success(
