@@ -1,0 +1,68 @@
+import { NextFunction, Request, Response } from "express";
+
+import { Secret } from "jsonwebtoken";
+
+
+import httpStatus from "http-status";
+import ApiError from "../../errors/ApiErrors";
+import { jwtHelpers } from "../../helpers/jwtHelpers";
+import prisma from "../../shared/prisma";
+import { env } from "../../config/env.config";
+
+const auth = (...roles: string[]) => {
+  return async (
+    req: Request & { user?: any },
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const authHeader = req.headers.authorization;
+      const cookieToken = req.cookies?.accessToken;
+      
+      let token = authHeader || cookieToken;
+      if (token && typeof token === "string" && token.startsWith("Bearer ")) {
+        token = token.slice(7).trim();
+      }
+
+      if (!token) {
+        throw new ApiError(httpStatus.UNAUTHORIZED, "You are not authorized!");
+      }
+
+      const verifiedUser = jwtHelpers.verifyToken(
+        token,
+        env.JWT_SECRET as Secret
+      );
+
+      const user = await prisma.user.findUnique({
+        where: {
+          email: verifiedUser.email,
+        },
+      });
+
+      if (!user) {
+        throw new ApiError(httpStatus.NOT_FOUND, "This user is not found !");
+      }
+
+      const userStatus = user?.status;
+
+      if (userStatus === "BLOCKED") {
+        throw new ApiError(httpStatus.FORBIDDEN, "This user is blocked ! !");
+      }
+
+      if (roles.length && !roles.includes(verifiedUser.role)) {
+        throw new ApiError(
+          httpStatus.FORBIDDEN,
+          `Forbidden! Your role ${verifiedUser.role.toLowerCase()} is not allowed to access this route..!!`
+        );
+      }
+
+      req.user = verifiedUser;
+
+      next();
+    } catch (err) {
+      next(err);
+    }
+  };
+};
+
+export default auth;

@@ -1,0 +1,191 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/client"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  name      String
+  firstName String?
+  lastName  String?
+  fullName  String?
+  email     String     @unique
+  phone     String?
+  photo     String?
+  bio       String?
+  fcmToken  String?
+  role      UserRole   @default(USER)
+  status    UserStatus @default(ACTIVE)
+
+  isEmailVerified Boolean @default(false)
+  isPhoneVerified Boolean @default(false)
+  isDeleted       Boolean @default(false)
+
+  // ── Relations ─────────────────────────────────────
+  auth   UserAuth?
+  orders Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model UserAuth {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  password          String
+  passwordChangedAt DateTime?
+  lastLoginAt       DateTime?
+
+  // ── Relation ──────────────────────────────────────
+  userId String @unique @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("user_auths")
+}
+
+model AuthChallenge {
+  id        String            @id @default(auto()) @map("_id") @db.ObjectId
+  email     String
+  otpHash   String
+  type      AuthChallengeType
+  expiresAt DateTime
+  createdAt DateTime          @default(now())
+
+  @@index([email, type])
+  @@map("auth_challenges")
+}
+
+model PasswordResetToken {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  tokenHash String    @unique
+  email     String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([email])
+  @@map("password_reset_tokens")
+}
+
+model Category {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   @unique
+  slug        String   @unique
+  image       String?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("categories")
+}
+
+model Product {
+  id                  String        @id @default(auto()) @map("_id") @db.ObjectId
+  title               String
+  slug                String?
+  description         String
+  price               Float
+  discountPercentage  Float         @default(0)
+  rating              Float         @default(5.0)
+  stock               Int           @default(10)
+  brand               String?
+  category            String
+  categoryId          String?       @db.ObjectId
+  thumbnail           String
+  images              String[]      @default([])
+  tags                String[]      @default([])
+  warrantyInformation String?
+  shippingInformation String?
+  availabilityStatus  String?       @default("In Stock")
+  isFeatured          Boolean       @default(false)
+  status              ProductStatus @default(ACTIVE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("products")
+}
+
+model Order {
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
+  orderNumber     String        @unique
+  userId          String?       @db.ObjectId
+  user            User?         @relation(fields: [userId], references: [id])
+  customerName    String
+  customerEmail   String
+  customerPhone   String?
+  shippingAddress String
+  city            String?
+  postalCode      String?
+  items           OrderItem[]
+  totalAmount     Float
+  discountAmount  Float         @default(0)
+  paymentMethod   String        @default("COD")
+  paymentStatus   PaymentStatus @default(PENDING)
+  orderStatus     OrderStatus   @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  orderId   String  @db.ObjectId
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String?
+  title     String
+  price     Float
+  quantity  Int     @default(1)
+  image     String?
+
+  @@map("order_items")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  BLOCKED
+}
+
+enum ProductStatus {
+  ACTIVE
+  INACTIVE
+  OUT_OF_STOCK
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum AuthChallengeType {
+  REGISTER
+  PASSWORD_RESET
+}
