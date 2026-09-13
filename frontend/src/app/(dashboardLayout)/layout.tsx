@@ -90,7 +90,7 @@ export default function DashboardLayout({
           </div>
         </header>
 
-        <main className="flex-1 p-6 md:p-8 max-w-7xl w-full mx-auto space-y-8">
+        <main className="flex-1 p-6 md:p-8 space-y-8">
           {children}
         </main>
       </SidebarInset>

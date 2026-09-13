@@ -1,19 +1,52 @@
 import httpStatus from "http-status";
 import prisma from "../../../shared/prisma";
 import ApiError from "../../../errors/ApiErrors";
+import { uploadFileToS3 } from "../../../helpers/uploadToS3";
+import { env } from "../../../config/env.config";
+import path from "path";
+import fs from "fs";
 
-const createCategory = async (payload: {
-  name: string;
-  slug?: string;
-  image?: string;
-  description?: string;
-}) => {
-  const slug = payload.slug || payload.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
+const uploadCategoryImage = async (file: Express.Multer.File): Promise<string> => {
+  if (env.AWS_S3_ACCESS_KEY && env.AWS_S3_SECRET_KEY && env.AWS_S3_ENDPOINT && env.AWS_S3_BUCKET) {
+    try {
+      const { fileUrl } = await uploadFileToS3(file);
+      if (fileUrl) return fileUrl;
+    } catch (error) {
+      console.warn("S3 upload failed, falling back to local file storage:", error);
+    }
+  }
+
+  const uploadDir = path.join(process.cwd(), "uploads");
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+
+  const fileExtension = path.extname(file.originalname) || ".jpg";
+  const fileName = `category-${Date.now()}-${Math.random().toString(36).substring(2, 9)}${fileExtension}`;
+  const filePath = path.join(uploadDir, fileName);
+  fs.writeFileSync(filePath, file.buffer);
+
+  const baseUrl = process.env.BACKEND_IMAGE_URL || "http://localhost:5000";
+  return `${baseUrl}/uploads/${fileName}`;
+};
+
+const createCategory = async (
+  file: Express.Multer.File | undefined,
+  payload: {
+    id?: string;
+    name: string;
+    slug?: string;
+    image?: string;
+    description?: string;
+  }
+) => {
+  const { id: _ignoredId, ...cleanPayload } = payload;
+  const slug = cleanPayload.slug || cleanPayload.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
   
   const existing = await prisma.category.findFirst({
     where: {
       OR: [
-        { name: { equals: payload.name, mode: "insensitive" } },
+        { name: { equals: cleanPayload.name, mode: "insensitive" } },
         { slug },
       ],
     },
@@ -23,10 +56,16 @@ const createCategory = async (payload: {
     throw new ApiError(httpStatus.CONFLICT, "Category name or slug already exists.");
   }
 
+  let image = cleanPayload.image;
+  if (file) {
+    image = await uploadCategoryImage(file);
+  }
+
   const category = await prisma.category.create({
     data: {
-      ...payload,
+      ...cleanPayload,
       slug,
+      ...(image !== undefined && { image }),
     },
   });
 
@@ -37,7 +76,25 @@ const getAllCategories = async () => {
   const categories = await prisma.category.findMany({
     orderBy: { name: "asc" },
   });
-  return categories;
+
+  const categoriesWithCount = await Promise.all(
+    categories.map(async (c) => {
+      const productsCount = await prisma.product.count({
+        where: {
+          OR: [
+            { category: c.name },
+            { categoryId: c.id },
+          ],
+        },
+      });
+      return {
+        ...c,
+        productsCount,
+      };
+    })
+  );
+
+  return categoriesWithCount;
 };
 
 const getCategoryById = async (id: string) => {
@@ -54,7 +111,9 @@ const getCategoryById = async (id: string) => {
 
 const updateCategory = async (
   id: string,
+  file: Express.Multer.File | undefined,
   payload: {
+    id?: string;
     name?: string;
     slug?: string;
     image?: string;
@@ -69,13 +128,20 @@ const updateCategory = async (
     throw new ApiError(httpStatus.NOT_FOUND, "Category not found.");
   }
 
-  const slug = payload.slug || (payload.name ? payload.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "") : undefined);
+  const { id: _ignoredId, ...cleanPayload } = payload;
+  const slug = cleanPayload.slug || (cleanPayload.name ? cleanPayload.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "") : undefined);
+
+  let image = cleanPayload.image;
+  if (file) {
+    image = await uploadCategoryImage(file);
+  }
 
   const updated = await prisma.category.update({
     where: { id },
     data: {
-      ...payload,
+      ...cleanPayload,
       ...(slug && { slug }),
+      ...(image !== undefined && { image }),
     },
   });
 

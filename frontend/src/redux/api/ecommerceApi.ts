@@ -59,11 +59,24 @@ export const ecommerceApi = baseApi.injectEndpoints({
       invalidatesTags: ["Category", "Dashboard"],
     }),
     updateCategory: builder.mutation({
-      query: ({ id, ...data }: { id: string; [key: string]: any }) => ({
-        url: `/categories/${id}`,
-        method: "PATCH",
-        body: data,
-      }),
+      query: (data) => {
+        let id: string;
+        let body: any;
+        if (data instanceof FormData) {
+          id = data.get("id") as string;
+          data.delete("id");
+          body = data;
+        } else {
+          const { id: dataId, ...rest } = data;
+          id = dataId;
+          body = rest;
+        }
+        return {
+          url: `/categories/${id}`,
+          method: "PATCH",
+          body,
+        };
+      },
       invalidatesTags: ["Category", "Dashboard"],
     }),
     deleteCategory: builder.mutation({
