@@ -47,7 +47,17 @@ const MiddleHeader = () => {
         </Link>
 
         {/* Search */}
-        <div className="hidden md:inline-flex flex-1 max-w-xl h-10 relative">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (searchValue.trim()) {
+              router.push(`/products?searchTerm=${encodeURIComponent(searchValue.trim())}`);
+            } else {
+              router.push("/products");
+            }
+          }}
+          className="hidden md:inline-flex flex-1 max-w-xl h-10 relative"
+        >
           <input
             type="text"
             placeholder="Search products, brands and categories..."
@@ -63,10 +73,13 @@ const MiddleHeader = () => {
             />
           )}
 
-          <button className="w-8 h-8 bg-black rounded-full inline-flex items-center justify-center text-white absolute top-1 right-1 hover:bg-slate-800 duration-200">
+          <button
+            type="submit"
+            className="w-8 h-8 bg-black rounded-full inline-flex items-center justify-center text-white absolute top-1 right-1 hover:bg-slate-800 duration-200"
+          >
             <RiSearchLine className="text-sm" />
           </button>
-        </div>
+        </form>
 
         {/* Actions */}
         <div className="hidden md:inline-flex items-center gap-5">

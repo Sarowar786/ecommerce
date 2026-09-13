@@ -161,6 +161,69 @@ export const ecommerceApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Dashboard"],
     }),
+
+    // ── Cart ──────────────────────────────────
+    getMyCart: builder.query({
+      query: () => ({
+        url: "/cart",
+        method: "GET",
+      }),
+      providesTags: ["Cart"],
+    }),
+    addToCartBackend: builder.mutation({
+      query: (data: { productId: string; quantity?: number; color?: string; size?: string }) => ({
+        url: "/cart",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Cart"],
+    }),
+    updateCartQuantity: builder.mutation({
+      query: ({ id, quantity }: { id: string; quantity: number }) => ({
+        url: `/cart/${id}`,
+        method: "PATCH",
+        body: { quantity },
+      }),
+      invalidatesTags: ["Cart"],
+    }),
+    removeCartItem: builder.mutation({
+      query: (id: string) => ({
+        url: `/cart/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Cart"],
+    }),
+    clearCartBackend: builder.mutation({
+      query: () => ({
+        url: "/cart",
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Cart"],
+    }),
+
+    // ── Wishlist ──────────────────────────────
+    getMyWishlist: builder.query({
+      query: () => ({
+        url: "/wishlist",
+        method: "GET",
+      }),
+      providesTags: ["Wishlist"],
+    }),
+    toggleWishlist: builder.mutation({
+      query: (productId: string) => ({
+        url: "/wishlist/toggle",
+        method: "POST",
+        body: { productId },
+      }),
+      invalidatesTags: ["Wishlist"],
+    }),
+    removeFromWishlist: builder.mutation({
+      query: (productId: string) => ({
+        url: `/wishlist/${productId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Wishlist"],
+    }),
   }),
 });
 
@@ -181,4 +244,12 @@ export const {
   useGetOrderByIdQuery,
   useUpdateOrderStatusMutation,
   useGetDashboardOverviewQuery,
+  useGetMyCartQuery,
+  useAddToCartBackendMutation,
+  useUpdateCartQuantityMutation,
+  useRemoveCartItemMutation,
+  useClearCartBackendMutation,
+  useGetMyWishlistQuery,
+  useToggleWishlistMutation,
+  useRemoveFromWishlistMutation,
 } = ecommerceApi;

@@ -5,16 +5,29 @@ import Image from "next/image";
 import PriceFormat from "../PriceFormat";
 import AddToCartButton from "../AddToCartButton";
 import { IoClose } from "react-icons/io5";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { removeFromCart } from "@/redux/shofySlice";
+import { RootState } from "@/redux/store";
+import { useRemoveCartItemMutation } from "@/redux/api/ecommerceApi";
 import toast from "react-hot-toast";
 import { FaCheck } from "react-icons/fa";
 
 const CartProduct = ({ product }: { product: ProductType }) => {
   const dispatch = useDispatch();
-  const handleRemoveProduct = () => {
+  const token = useSelector((state: RootState) => state.auth?.token);
+  const [removeCartItem] = useRemoveCartItemMutation();
+
+  const handleRemoveProduct = async () => {
     dispatch(removeFromCart(product?.id));
     toast.success(`${product?.title.substring(0, 20)} deleted successfully!`);
+
+    if (token && product?.id) {
+      try {
+        await removeCartItem(String(product.id)).unwrap();
+      } catch (err) {
+        console.error("Failed to remove item from backend cart:", err);
+      }
+    }
   };
   return (
     <div className="flex py-6 sm:py-10">

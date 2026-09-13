@@ -7,11 +7,17 @@ import {
 } from "@/redux/shofySlice";
 import { useDispatch, useSelector } from "react-redux";
 import { ProductType, StateType } from "../../type";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { FaPlus } from "react-icons/fa6";
 import { FaMinus } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
+import { RootState } from "@/redux/store";
+import {
+  useAddToCartBackendMutation,
+  useUpdateCartQuantityMutation,
+} from "@/redux/api/ecommerceApi";
+
 interface PropsType {
   product?: ProductType;
   className?: string;
@@ -19,35 +25,80 @@ interface PropsType {
 
 const AddToCartButton = ({ product, className }: PropsType) => {
   const { cart } = useSelector((state: StateType) => state?.shopy);
+  const token = useSelector((state: RootState) => state.auth?.token);
   const [existingProduct, setExistingProduct] = useState<ProductType | null>(
     null
   );
   const dispatch = useDispatch();
+  const [addToCartBackend] = useAddToCartBackendMutation();
+  const [updateCartQuantity] = useUpdateCartQuantityMutation();
 
   useEffect(() => {
     const availableProduct = cart?.find((item) => item?.id === product?.id);
     if (availableProduct) {
       setExistingProduct(availableProduct);
+    } else {
+      setExistingProduct(null);
     }
   }, [cart, product]);
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (product) {
       dispatch(addToCart(product));
       toast.success(
-        `${product?.title.substring(0, 10)}... added successfully!`
+        `${product?.title ? product.title.substring(0, 15) : "Item"}... added successfully!`
       );
+
+      if (token && product?.id) {
+        try {
+          await addToCartBackend({
+            productId: String(product.id),
+            quantity: 1,
+          }).unwrap();
+        } catch (err) {
+          console.error("Failed to sync cart to backend:", err);
+        }
+      }
     }
   };
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
+    if (!product) return;
     dispatch(increaseQuantity(product?.id));
-    toast.success(`${product?.title.substring(0, 10)}... added successfully!`);
+    toast.success(
+      `${product?.title ? product.title.substring(0, 15) : "Item"}... added successfully!`
+    );
+
+    if (token && product?.id) {
+      const nextQty = (existingProduct?.quantity || 1) + 1;
+      try {
+        await updateCartQuantity({
+          id: String(product.id),
+          quantity: nextQty,
+        }).unwrap();
+      } catch (err) {
+        console.error("Failed to update cart quantity on backend:", err);
+      }
+    }
   };
-  const handleMinus = () => {
+
+  const handleMinus = async () => {
+    if (!product) return;
     if (existingProduct?.quantity! > 1) {
       dispatch(decreaseQuantity(product?.id));
       toast.success(`Quantity decreased successfully!`);
+
+      if (token && product?.id) {
+        const nextQty = (existingProduct?.quantity || 2) - 1;
+        try {
+          await updateCartQuantity({
+            id: String(product.id),
+            quantity: nextQty,
+          }).unwrap();
+        } catch (err) {
+          console.error("Failed to update cart quantity on backend:", err);
+        }
+      }
     } else {
       toast.error("Quantity can not decrease less than 1");
     }
@@ -58,31 +109,33 @@ const AddToCartButton = ({ product, className }: PropsType) => {
       {existingProduct ? (
         <div
           className={twMerge(
-            "flex items-center gap-x-5 h-10 rounded-full",
+            "flex items-center justify-between border border-slate-200 bg-slate-50 h-9 px-3 rounded-full shadow-sm",
             className
           )}
         >
           <button
             disabled={existingProduct?.quantity === 1}
             onClick={handleMinus}
-            className="bg-gray-100 h-full w-10 rounded-full flex items-center justify-center border hover:border-skyColor hover:bg-transparent duration-200 disabled:text-gray-500 disabled:bg-white"
+            className="h-6 w-6 rounded-full flex items-center justify-center bg-white border border-slate-200 hover:bg-amber-500 hover:border-amber-500 text-slate-700 hover:text-slate-950 duration-200 disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-slate-700 transition"
           >
-            <FaMinus />
-          </button>{" "}
-          <p className="text-base font-semibold">{existingProduct?.quantity}</p>{" "}
+            <FaMinus className="text-[10px]" />
+          </button>
+          <span className="text-sm font-semibold px-3 text-slate-800">
+            {existingProduct?.quantity}
+          </span>
           <button
             onClick={handleAdd}
-            className="bg-gray-100 h-full w-10 rounded-full flex items-center justify-center border hover:border-skyColor hover:bg-transparent duration-200"
+            className="h-6 w-6 rounded-full flex items-center justify-center bg-white border border-slate-200 hover:bg-amber-500 hover:border-amber-500 text-slate-700 hover:text-slate-950 duration-200 transition"
           >
-            <FaPlus />
+            <FaPlus className="text-[10px]" />
           </button>
         </div>
       ) : (
         <button
           onClick={handleAddToCart}
-          className="bg-transparent border border-skyColor text-black rounded-full py-1.5 hover:bg-skyColor hover:text-white duration-300 my-2"
+          className="w-full bg-slate-950 text-white font-medium text-xs tracking-wide uppercase py-2.5 px-4 rounded-lg hover:bg-amber-500 hover:text-slate-950 transition-all duration-200 shadow-sm active:scale-95"
         >
-          Add to cart
+          Add to Cart
         </button>
       )}
     </>

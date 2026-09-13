@@ -6,6 +6,8 @@ import { CategoryRoutes } from "../modules/Category/category.route";
 import { ProductRoutes } from "../modules/Product/product.route";
 import { OrderRoutes } from "../modules/Order/order.route";
 import { DashboardRoutes } from "../modules/Dashboard/dashboard.route";
+import { CartRoutes } from "../modules/Cart/cart.route";
+import { WishlistRoutes } from "../modules/Wishlist/wishlist.route";
 
 const router = express.Router();
 
@@ -33,6 +35,14 @@ const moduleRoutes = [
   {
     path: "/dashboard",
     route: DashboardRoutes,
+  },
+  {
+    path: "/cart",
+    route: CartRoutes,
+  },
+  {
+    path: "/wishlist",
+    route: WishlistRoutes,
   },
 ];
 

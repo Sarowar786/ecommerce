@@ -1,8 +1,8 @@
 import BottomHeader from "@/components/header/BottomHeader";
-import Banner from "@/components/pages/home/Banner";
+import Banner from "@/components/pages/Banner";
 import ProductList from "@/components/ProductList";
 import { getData } from "@/app/helpers";
-import FeaturedCategory from "@/components/pages/home/FeaturedCategory";
+import FeaturedCategory from "@/components/pages/FeaturedCategory";
 
 export const dynamic = "force-dynamic";
 

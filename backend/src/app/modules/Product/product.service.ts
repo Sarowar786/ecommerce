@@ -152,49 +152,140 @@ const getAllProducts = async (query: {
   page?: string | number;
   limit?: string | number;
   search?: string;
+  searchTerm?: string;
+  q?: string;
   category?: string;
+  categoryId?: string;
   brand?: string;
   isFeatured?: string;
   minPrice?: string | number;
   maxPrice?: string | number;
+  min_price?: string | number;
+  max_price?: string | number;
+  rating?: string | number;
   sortBy?: string;
+  sortby?: string;
   sortOrder?: "asc" | "desc";
 }) => {
   const page = Number(query.page) || 1;
   const limit = Number(query.limit) || 50;
   const skip = (page - 1) * limit;
 
-  const where: any = {};
+  const andConditions: any[] = [];
 
-  if (query.search) {
-    where.OR = [
-      { title: { contains: query.search, mode: "insensitive" } },
-      { description: { contains: query.search, mode: "insensitive" } },
-      { brand: { contains: query.search, mode: "insensitive" } },
-      { category: { contains: query.search, mode: "insensitive" } },
-    ];
+  // 1. Search term filter
+  const rawSearch = query.searchTerm || query.search || query.q;
+  const search = typeof rawSearch === "string" ? rawSearch.trim() : "";
+  if (search) {
+    andConditions.push({
+      OR: [
+        { title: { contains: search, mode: "insensitive" } },
+        { description: { contains: search, mode: "insensitive" } },
+        { brand: { contains: search, mode: "insensitive" } },
+        { category: { contains: search, mode: "insensitive" } },
+      ],
+    });
   }
 
-  if (query.category) {
-    where.category = { equals: query.category, mode: "insensitive" };
+  // 2. Category filter by categoryId or slug/name
+  const categoryParam = (query.categoryId || query.category)?.toString()?.trim();
+  if (categoryParam && categoryParam !== "") {
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(categoryParam);
+
+    if (isObjectId) {
+      // Direct high-performance indexed query by categoryId
+      andConditions.push({ categoryId: categoryParam });
+    } else {
+      // Resolve category by slug or name to its exact categoryId
+      const matchedCat = await prisma.category.findFirst({
+        where: {
+          OR: [
+            { slug: { equals: categoryParam, mode: "insensitive" } },
+            { name: { equals: categoryParam, mode: "insensitive" } },
+          ],
+        },
+      });
+
+      if (matchedCat) {
+        andConditions.push({
+          OR: [
+            { categoryId: matchedCat.id },
+            { category: { equals: matchedCat.name, mode: "insensitive" } },
+          ],
+        });
+      } else {
+        andConditions.push({
+          category: { equals: categoryParam, mode: "insensitive" },
+        });
+      }
+    }
   }
 
+  // 3. Brand filter
   if (query.brand) {
-    where.brand = { equals: query.brand, mode: "insensitive" };
+    const brand = query.brand.toString().trim();
+    if (brand) {
+      andConditions.push({
+        brand: { equals: brand, mode: "insensitive" },
+      });
+    }
   }
 
-  if (query.isFeatured !== undefined) {
-    where.isFeatured = query.isFeatured === "true" || query.isFeatured === true as any;
+  // 4. Featured filter
+  if (query.isFeatured !== undefined && query.isFeatured !== "") {
+    andConditions.push({
+      isFeatured: query.isFeatured === "true" || (query.isFeatured === true as any),
+    });
   }
 
-  if (query.minPrice || query.maxPrice) {
-    where.price = {};
-    if (query.minPrice) where.price.gte = Number(query.minPrice);
-    if (query.maxPrice) where.price.lte = Number(query.maxPrice);
+  // 5. Price range filter
+  const minPrice = query.minPrice ?? query.min_price;
+  const maxPrice = query.maxPrice ?? query.max_price;
+  if (minPrice !== undefined || maxPrice !== undefined) {
+    const priceCondition: any = {};
+    if (minPrice !== undefined && minPrice !== "" && !isNaN(Number(minPrice))) {
+      priceCondition.gte = Number(minPrice);
+    }
+    if (maxPrice !== undefined && maxPrice !== "" && !isNaN(Number(maxPrice))) {
+      priceCondition.lte = Number(maxPrice);
+    }
+    if (Object.keys(priceCondition).length > 0) {
+      andConditions.push({ price: priceCondition });
+    }
   }
 
-  const sortBy = query.sortBy || "createdAt";
-  const sortOrder = query.sortOrder || "desc";
+  // 6. Rating filter
+  const rating = query.rating;
+  if (rating !== undefined && rating !== "" && !isNaN(Number(rating))) {
+    andConditions.push({ rating: { gte: Number(rating) } });
+  }
+
+  const where: any = andConditions.length > 0 ? { AND: andConditions } : {};
+
+  // 7. Sort options
+  let sortBy = query.sortBy || "createdAt";
+  let sortOrder = query.sortOrder || "desc";
+
+  const sortbyParam = query.sortby || (query as any).sortby;
+  if (sortbyParam === "recent") {
+    sortBy = "createdAt";
+    sortOrder = "desc";
+  } else if (sortbyParam === "asc") {
+    sortBy = "title";
+    sortOrder = "asc";
+  } else if (sortbyParam === "desc") {
+    sortBy = "title";
+    sortOrder = "desc";
+  } else if (sortbyParam === "price_low") {
+    sortBy = "price";
+    sortOrder = "asc";
+  } else if (sortbyParam === "price_high") {
+    sortBy = "price";
+    sortOrder = "desc";
+  } else if (sortbyParam === "rating" || sortbyParam === "top_rated") {
+    sortBy = "rating";
+    sortOrder = "desc";
+  }
 
   const [products, total] = await Promise.all([
     prisma.product.findMany({
