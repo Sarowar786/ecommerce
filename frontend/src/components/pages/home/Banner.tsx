@@ -1,6 +1,6 @@
 import { bannerImageOne } from "@/assets";
 import Container from "@/components/Container";
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/button";
 import { banner } from "@/constants";
 import Image from "next/image";
 import { GoArrowRight } from "react-icons/go";

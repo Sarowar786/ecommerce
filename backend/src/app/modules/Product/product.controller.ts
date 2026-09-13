@@ -5,7 +5,8 @@ import sendResponse from "../../../shared/sendResponse";
 import { ProductServices } from "./product.service";
 
 const createProduct = catchAsync(async (req: Request, res: Response) => {
-  const result = await ProductServices.createProduct(req.body);
+  const files = (req.files as Express.Multer.File[]) || (req.file ? [req.file] : undefined);
+  const result = await ProductServices.createProduct(files, req.body);
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,
@@ -36,7 +37,8 @@ const getProductById = catchAsync(async (req: Request, res: Response) => {
 });
 
 const updateProduct = catchAsync(async (req: Request, res: Response) => {
-  const result = await ProductServices.updateProduct(String(req.params.id), req.body);
+  const files = (req.files as Express.Multer.File[]) || (req.file ? [req.file] : undefined);
+  const result = await ProductServices.updateProduct(String(req.params.id), files, req.body);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

@@ -8,12 +8,9 @@ import {
   useUpdateCategoryMutation,
   useDeleteCategoryMutation,
 } from "@/redux/api/ecommerceApi";
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -50,9 +47,12 @@ export default function CategoriesManagementPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const { data, isLoading } = useGetCategoriesQuery(undefined);
 
-  const [createCategory, { isLoading: isCreating }] = useCreateCategoryMutation();
-  const [updateCategory, { isLoading: isUpdating }] = useUpdateCategoryMutation();
-  const [deleteCategory, { isLoading: isDeleting }] = useDeleteCategoryMutation();
+  const [createCategory, { isLoading: isCreating }] =
+    useCreateCategoryMutation();
+  const [updateCategory, { isLoading: isUpdating }] =
+    useUpdateCategoryMutation();
+  const [deleteCategory, { isLoading: isDeleting }] =
+    useDeleteCategoryMutation();
 
   // Modal States
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -78,10 +78,11 @@ export default function CategoriesManagementPage() {
 
   const categories = data?.data || [];
 
-  const filteredCategories = categories.filter((c: any) =>
-    c.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    c.slug?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    c.description?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredCategories = categories.filter(
+    (c: any) =>
+      c.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.slug?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.description?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const handleOpenAdd = () => {
@@ -102,7 +103,9 @@ export default function CategoriesManagementPage() {
     });
     setImageFile(null);
     setImagePreview(cat.image || "");
-    setImageInputMode(cat.image && !cat.image.includes("/uploads/") ? "url" : "file");
+    setImageInputMode(
+      cat.image && !cat.image.includes("/uploads/") ? "url" : "file",
+    );
     setIsEditOpen(true);
   };
 
@@ -144,7 +147,8 @@ export default function CategoriesManagementPage() {
         const payload = new FormData();
         payload.append("name", formData.name.trim());
         if (formData.slug.trim()) payload.append("slug", formData.slug.trim());
-        if (formData.description.trim()) payload.append("description", formData.description.trim());
+        if (formData.description.trim())
+          payload.append("description", formData.description.trim());
         payload.append("image", imageFile);
 
         await createCategory(payload).unwrap();
@@ -162,7 +166,9 @@ export default function CategoriesManagementPage() {
       toast.success("Category created successfully!", { id: toastId });
       setIsAddOpen(false);
     } catch (err: any) {
-      toast.error(err?.data?.message || "Failed to create category", { id: toastId });
+      toast.error(err?.data?.message || "Failed to create category", {
+        id: toastId,
+      });
     }
   };
 
@@ -181,7 +187,8 @@ export default function CategoriesManagementPage() {
         payload.append("id", selectedCategory.id);
         payload.append("name", formData.name.trim());
         if (formData.slug.trim()) payload.append("slug", formData.slug.trim());
-        if (formData.description.trim()) payload.append("description", formData.description.trim());
+        if (formData.description.trim())
+          payload.append("description", formData.description.trim());
         payload.append("image", imageFile);
 
         await updateCategory(payload).unwrap();
@@ -191,7 +198,9 @@ export default function CategoriesManagementPage() {
           name: formData.name.trim(),
           slug: formData.slug.trim() || undefined,
           description: formData.description.trim() || undefined,
-          image: formData.imageUrl.trim() || (imagePreview ? imagePreview : undefined),
+          image:
+            formData.imageUrl.trim() ||
+            (imagePreview ? imagePreview : undefined),
         };
 
         await updateCategory(payload).unwrap();
@@ -200,7 +209,9 @@ export default function CategoriesManagementPage() {
       toast.success("Category updated successfully!", { id: toastId });
       setIsEditOpen(false);
     } catch (err: any) {
-      toast.error(err?.data?.message || "Failed to update category", { id: toastId });
+      toast.error(err?.data?.message || "Failed to update category", {
+        id: toastId,
+      });
     }
   };
 
@@ -212,7 +223,9 @@ export default function CategoriesManagementPage() {
       toast.success("Category deleted successfully!", { id: toastId });
       setIsDeleteOpen(false);
     } catch (err: any) {
-      toast.error(err?.data?.message || "Failed to delete category", { id: toastId });
+      toast.error(err?.data?.message || "Failed to delete category", {
+        id: toastId,
+      });
     }
   };
 
@@ -225,7 +238,8 @@ export default function CategoriesManagementPage() {
             Categories Catalog
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Organize, classify products, and manage category media across your store.
+            Organize, classify products, and manage category media across your
+            store.
           </p>
         </div>
 
@@ -273,7 +287,9 @@ export default function CategoriesManagementPage() {
           ) : filteredCategories.length === 0 ? (
             <div className="p-12 text-center text-sm text-slate-400 space-y-3">
               <FolderOpen className="h-10 w-10 text-slate-300 mx-auto" />
-              <p className="font-semibold text-slate-700">No categories found</p>
+              <p className="font-semibold text-slate-700">
+                No categories found
+              </p>
               <p className="text-xs text-slate-400">
                 Try adjusting your search query or add a new category.
               </p>
@@ -301,7 +317,10 @@ export default function CategoriesManagementPage() {
               </TableHeader>
               <TableBody>
                 {filteredCategories.map((item: any) => (
-                  <TableRow key={item.id} className="hover:bg-slate-50/70 transition group">
+                  <TableRow
+                    key={item.id}
+                    className="hover:bg-slate-50/70 transition group"
+                  >
                     <TableCell className="py-3 px-6">
                       <div className="flex items-center gap-3">
                         <div className="h-12 w-12 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden relative shrink-0 flex items-center justify-center">
@@ -383,7 +402,8 @@ export default function CategoriesManagementPage() {
           <DialogHeader>
             <DialogTitle>Add New Category</DialogTitle>
             <DialogDescription>
-              Create a new category for storefront catalog and product navigation.
+              Create a new category for storefront catalog and product
+              navigation.
             </DialogDescription>
           </DialogHeader>
 
@@ -511,7 +531,10 @@ export default function CategoriesManagementPage() {
                       <Input
                         value={formData.imageUrl}
                         onChange={(e) => {
-                          setFormData({ ...formData, imageUrl: e.target.value });
+                          setFormData({
+                            ...formData,
+                            imageUrl: e.target.value,
+                          });
                           setImagePreview(e.target.value);
                         }}
                         placeholder="https://example.com/category.jpg"
@@ -712,7 +735,10 @@ export default function CategoriesManagementPage() {
                       <Input
                         value={formData.imageUrl}
                         onChange={(e) => {
-                          setFormData({ ...formData, imageUrl: e.target.value });
+                          setFormData({
+                            ...formData,
+                            imageUrl: e.target.value,
+                          });
                           setImagePreview(e.target.value);
                         }}
                         placeholder="https://example.com/category.jpg"

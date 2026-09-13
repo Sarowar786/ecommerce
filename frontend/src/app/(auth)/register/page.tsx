@@ -9,8 +9,14 @@ import { logo } from "@/assets";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useRegisterMutation } from "@/redux/api/authApi";
-import { Button } from "@/components/ui/Button";
-import { Sparkles, ShoppingBag, ShieldCheck, ArrowRight, UserPlus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Sparkles,
+  ShoppingBag,
+  ShieldCheck,
+  ArrowRight,
+  UserPlus,
+} from "lucide-react";
 
 const registerSchema = z
   .object({
@@ -24,9 +30,7 @@ const registerSchema = z
       .string()
       .min(6, "Password must be at least 6 characters")
       .max(100, "Password is too long"),
-    confirm_password: z
-      .string()
-      .min(6, "Confirm password is required"),
+    confirm_password: z.string().min(6, "Confirm password is required"),
   })
   .refine((data) => data.password === data.confirm_password, {
     message: "Passwords don't match",
@@ -66,9 +70,12 @@ export default function SignupPage() {
       if (res?.success) {
         const email = res?.data?.email || data.email.trim().toLowerCase();
 
-        toast.success(res?.message || "Registration successful! Verification OTP sent.", {
-          id: toastId,
-        });
+        toast.success(
+          res?.message || "Registration successful! Verification OTP sent.",
+          {
+            id: toastId,
+          },
+        );
 
         router.push(`/otp-verify?email=${encodeURIComponent(email)}`);
       } else {
@@ -108,7 +115,9 @@ export default function SignupPage() {
           <div className="h-10 w-10 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 flex items-center justify-center font-bold text-xl text-white shadow-lg shadow-amber-500/30">
             <ShoppingBag className="h-5 w-5" />
           </div>
-          <span className="text-2xl font-black tracking-tight">Shofy Store</span>
+          <span className="text-2xl font-black tracking-tight">
+            Shofy Store
+          </span>
         </div>
 
         <div className="relative z-10 my-auto max-w-md space-y-6">
@@ -120,24 +129,34 @@ export default function SignupPage() {
             Create your account in seconds.
           </h2>
           <p className="text-slate-300 text-base leading-relaxed">
-            Get instant access to exclusive member deals, express checkout, and seamless order management across all devices.
+            Get instant access to exclusive member deals, express checkout, and
+            seamless order management across all devices.
           </p>
 
           <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/10">
             <div className="flex items-center gap-3">
               <ShieldCheck className="h-5 w-5 text-emerald-400" />
-              <span className="text-xs text-slate-300 font-medium">Safe & Verified</span>
+              <span className="text-xs text-slate-300 font-medium">
+                Safe & Verified
+              </span>
             </div>
             <div className="flex items-center gap-3">
               <Sparkles className="h-5 w-5 text-amber-400" />
-              <span className="text-xs text-slate-300 font-medium">Free Member Perks</span>
+              <span className="text-xs text-slate-300 font-medium">
+                Free Member Perks
+              </span>
             </div>
           </div>
         </div>
 
         <div className="relative z-10 text-xs text-slate-400 flex items-center justify-between">
-          <span>&copy; {new Date().getFullYear()} Shofy Inc. All rights reserved.</span>
-          <Link href="/" className="hover:text-white transition flex items-center gap-1">
+          <span>
+            &copy; {new Date().getFullYear()} Shofy Inc. All rights reserved.
+          </span>
+          <Link
+            href="/"
+            className="hover:text-white transition flex items-center gap-1"
+          >
             Back to Store <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
@@ -147,8 +166,15 @@ export default function SignupPage() {
       <div className="flex items-center justify-center px-6 py-12 bg-slate-50/50">
         <div className="w-full max-w-md bg-white p-8 sm:p-10 rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100">
           <div className="flex flex-col items-center text-center">
-            <Link href="/" className="mb-4 inline-block transition hover:opacity-80">
-              <Image src={logo} alt="logo" className="h-10 w-auto object-contain" />
+            <Link
+              href="/"
+              className="mb-4 inline-block transition hover:opacity-80"
+            >
+              <Image
+                src={logo}
+                alt="logo"
+                className="h-10 w-auto object-contain"
+              />
             </Link>
             <h1 className="text-2xl font-bold tracking-tight text-slate-900">
               Create an account
@@ -158,7 +184,11 @@ export default function SignupPage() {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-4" noValidate>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="mt-8 space-y-4"
+            noValidate
+          >
             <div>
               <label className="text-xs font-semibold text-slate-700 uppercase tracking-wider">
                 Full Name
@@ -240,7 +270,9 @@ export default function SignupPage() {
               disabled={isSubmitting || isLoading}
               className="w-full rounded-xl py-3 bg-black hover:bg-slate-800 text-white font-semibold transition disabled:opacity-60 shadow-lg shadow-black/10 mt-2"
             >
-              {isSubmitting || isLoading ? "Creating Account..." : "Create Account"}
+              {isSubmitting || isLoading
+                ? "Creating Account..."
+                : "Create Account"}
             </Button>
 
             <p className="text-center text-sm text-slate-500 mt-6">

@@ -4,7 +4,7 @@ import Image from "next/image";
 import { MdFavoriteBorder, MdStar } from "react-icons/md";
 import { FiShoppingCart } from "react-icons/fi";
 import { LuEye } from "react-icons/lu";
-import Button from "./ui/Button";
+import Button from "./ui/button";
 import AddToCartButton from "./AddToCartButton";
 import Link from "next/link";
 import PriceFormat from "./PriceFormat";
@@ -35,12 +35,11 @@ const ProductCard = ({ product }: Props) => {
   const discountedPrice = product?.price + product?.discountPercentage / 100;
   return (
     <div className="border border-borderColor hover:shadow-lg hover:shadow-black/30 duration-300 rounded-md group overflow-hidden">
-      <Link
-        href={`/products/${product?.id}`}
-        className=" relative"
-      >
+      <Link href={`/products/${product?.id}`} className=" relative">
         <Image
-          src={product?.images?.[0] || product?.thumbnail || "/images/logonav.png"}
+          src={
+            product?.images?.[0] || product?.thumbnail || "/images/logonav.png"
+          }
           alt={product?.title || "product"}
           width={500}
           height={500}

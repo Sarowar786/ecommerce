@@ -107,6 +107,10 @@ model Product {
   tags                String[]      @default([])
   warrantyInformation String?
   shippingInformation String?
+  deliveryTimeline    String?
+  specifications      Json?
+  variants            Json?
+  video               String?
   availabilityStatus  String?       @default("In Stock")
   isFeatured          Boolean       @default(false)
   status              ProductStatus @default(ACTIVE)

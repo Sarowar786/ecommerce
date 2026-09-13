@@ -10,7 +10,7 @@ import {
 } from "@/redux/api/authApi";
 import { useDispatch } from "react-redux";
 import { setRefreshToken, setUser } from "@/redux/features/authSlice";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { ShieldCheck, Mail, ArrowLeft, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -100,12 +100,17 @@ function VerifyOtpForm() {
     const toastId = toast.loading("Resending verification code...");
 
     try {
-      const res = await resendOtp({ email: email.trim().toLowerCase() }).unwrap();
+      const res = await resendOtp({
+        email: email.trim().toLowerCase(),
+      }).unwrap();
 
       if (res?.success) {
-        toast.success(res?.message || "OTP resent successfully to your email!", {
-          id: toastId,
-        });
+        toast.success(
+          res?.message || "OTP resent successfully to your email!",
+          {
+            id: toastId,
+          },
+        );
         setCooldown(60);
       } else {
         toast.error(res?.message || "Resend failed!", { id: toastId });
@@ -122,12 +127,18 @@ function VerifyOtpForm() {
       <div className="w-full max-w-md bg-white rounded-3xl shadow-xl shadow-slate-200/60 p-8 border border-slate-100">
         <div className="flex flex-col items-center text-center">
           <Link href="/" className="mb-4 inline-block">
-            <Image src={logo} alt="logo" className="h-10 w-auto object-contain" />
+            <Image
+              src={logo}
+              alt="logo"
+              className="h-10 w-auto object-contain"
+            />
           </Link>
           <div className="h-12 w-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center mb-4">
             <Mail className="h-6 w-6" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Verify Your Email</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+            Verify Your Email
+          </h1>
           <p className="text-sm text-slate-500 mt-1">
             We sent a 6-digit verification code to
           </p>
@@ -153,7 +164,9 @@ function VerifyOtpForm() {
               })}
             />
             {errors.otp?.message && (
-              <p className="text-red-500 text-xs mt-2 text-center font-medium">{errors.otp.message}</p>
+              <p className="text-red-500 text-xs mt-2 text-center font-medium">
+                {errors.otp.message}
+              </p>
             )}
           </div>
 
@@ -180,7 +193,9 @@ function VerifyOtpForm() {
             className="text-amber-600 hover:text-amber-700 font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1 transition"
             type="button"
           >
-            <RefreshCw className={`h-3.5 w-3.5 ${resending ? "animate-spin" : ""}`} />
+            <RefreshCw
+              className={`h-3.5 w-3.5 ${resending ? "animate-spin" : ""}`}
+            />
             {cooldown > 0 ? `Resend code (${cooldown}s)` : "Resend OTP"}
           </button>
         </div>
@@ -191,7 +206,13 @@ function VerifyOtpForm() {
 
 export default function VerifyOtpPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-50 flex items-center justify-center"><div className="h-8 w-8 rounded-full border-4 border-slate-900 border-t-transparent animate-spin" /></div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+          <div className="h-8 w-8 rounded-full border-4 border-slate-900 border-t-transparent animate-spin" />
+        </div>
+      }
+    >
       <VerifyOtpForm />
     </Suspense>
   );

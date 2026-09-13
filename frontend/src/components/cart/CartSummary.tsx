@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Title from "../Title";
-import Button from "../ui/Button";
+import Button from "../ui/button";
 import PriceFormat from "../PriceFormat";
 import { ProductType } from "../../../type";
 import { useSelector } from "react-redux";
@@ -25,7 +25,8 @@ const CartSummary = ({ cart }: Props) => {
     cart?.map((item) => {
       amt += item?.price * (item?.quantity || 1);
       discount +=
-        (((item?.price || 0) * (item?.discountPercentage || 0)) / 100) * (item?.quantity || 1);
+        (((item?.price || 0) * (item?.discountPercentage || 0)) / 100) *
+        (item?.quantity || 1);
     });
 
     setTotalAmt(amt);
@@ -33,7 +34,7 @@ const CartSummary = ({ cart }: Props) => {
   }, [cart]);
 
   const stripePromise = loadStripe(
-    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "pk_test_placeholder"
+    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "pk_test_placeholder",
   );
 
   const handleCheckout = async () => {

@@ -13,8 +13,14 @@ import {
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { Button } from "@/components/ui/Button";
-import { KeyRound, ShieldCheck, Sparkles, ArrowRight, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  KeyRound,
+  ShieldCheck,
+  Sparkles,
+  ArrowRight,
+  ArrowLeft,
+} from "lucide-react";
 
 type ForgotFormValues = {
   email: string;
@@ -47,7 +53,7 @@ export default function ForgetPasswordPage() {
   const [step, setStep] = useState<"SEND" | "VERIFY">("SEND");
   const schema = useMemo(
     () => (step === "SEND" ? emailOnlySchema : emailOtpSchema),
-    [step]
+    [step],
   );
 
   const {
@@ -64,13 +70,17 @@ export default function ForgetPasswordPage() {
     mode: "onTouched",
   });
 
-  const [forgotPassword, { isLoading: isSending }] = useForgotPasswordMutation();
-  const [verifyResetOtp, { isLoading: isVerifying }] = useVerifyResetOtpMutation();
+  const [forgotPassword, { isLoading: isSending }] =
+    useForgotPasswordMutation();
+  const [verifyResetOtp, { isLoading: isVerifying }] =
+    useVerifyResetOtpMutation();
 
   const onSubmit = async (data: ForgotFormValues) => {
     try {
       if (step === "SEND") {
-        const res = await forgotPassword({ email: data.email.trim().toLowerCase() }).unwrap();
+        const res = await forgotPassword({
+          email: data.email.trim().toLowerCase(),
+        }).unwrap();
         toast.success(res?.message || "Password reset OTP sent to your email!");
         setStep("VERIFY");
         return;
@@ -91,7 +101,9 @@ export default function ForgetPasswordPage() {
       }
     } catch (err: any) {
       console.log("FORGOT/VERIFY ERROR:", err);
-      toast.error(err?.data?.message || err?.error || "Invalid OTP code or request.");
+      toast.error(
+        err?.data?.message || err?.error || "Invalid OTP code or request.",
+      );
     }
   };
 
@@ -108,7 +120,9 @@ export default function ForgetPasswordPage() {
           <div className="h-10 w-10 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 flex items-center justify-center font-bold text-xl text-white shadow-lg shadow-amber-500/30">
             <KeyRound className="h-5 w-5" />
           </div>
-          <span className="text-2xl font-black tracking-tight">Account Recovery</span>
+          <span className="text-2xl font-black tracking-tight">
+            Account Recovery
+          </span>
         </div>
 
         <div className="relative z-10 my-auto max-w-md space-y-6">
@@ -120,13 +134,19 @@ export default function ForgetPasswordPage() {
             Forgot your password? We&apos;ve got your back.
           </h2>
           <p className="text-slate-300 text-base leading-relaxed">
-            Follow the quick 2-step verification to securely recover your account credentials.
+            Follow the quick 2-step verification to securely recover your
+            account credentials.
           </p>
         </div>
 
         <div className="relative z-10 text-xs text-slate-400 flex items-center justify-between">
-          <span>&copy; {new Date().getFullYear()} Shofy Inc. All rights reserved.</span>
-          <Link href="/login" className="hover:text-white transition flex items-center gap-1">
+          <span>
+            &copy; {new Date().getFullYear()} Shofy Inc. All rights reserved.
+          </span>
+          <Link
+            href="/login"
+            className="hover:text-white transition flex items-center gap-1"
+          >
             Back to Sign In <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
@@ -136,8 +156,15 @@ export default function ForgetPasswordPage() {
       <div className="flex items-center justify-center px-6 py-12 bg-slate-50/50">
         <div className="w-full max-w-md bg-white p-8 sm:p-10 rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100">
           <div className="flex flex-col items-center text-center">
-            <Link href="/" className="mb-4 inline-block transition hover:opacity-80">
-              <Image src={logo} alt="logo" className="h-10 w-auto object-contain" />
+            <Link
+              href="/"
+              className="mb-4 inline-block transition hover:opacity-80"
+            >
+              <Image
+                src={logo}
+                alt="logo"
+                className="h-10 w-auto object-contain"
+              />
             </Link>
             <h1 className="text-2xl font-bold tracking-tight text-slate-900">
               {step === "SEND" ? "Forgot Password?" : "Enter Recovery OTP"}
@@ -149,7 +176,11 @@ export default function ForgetPasswordPage() {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-4" noValidate>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="mt-8 space-y-4"
+            noValidate
+          >
             <div>
               <label className="text-xs font-semibold text-slate-700 uppercase tracking-wider">
                 Email Address
@@ -207,7 +238,9 @@ export default function ForgetPasswordPage() {
                     onClick={async () => {
                       try {
                         const email = getValues("email");
-                        const res = await forgotPassword({ email: email.trim().toLowerCase() }).unwrap();
+                        const res = await forgotPassword({
+                          email: email.trim().toLowerCase(),
+                        }).unwrap();
                         toast.success(res?.message || "New OTP code sent!");
                       } catch (err: any) {
                         toast.error(err?.data?.message || "Failed to resend");

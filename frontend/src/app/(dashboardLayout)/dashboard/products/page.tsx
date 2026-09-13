@@ -4,22 +4,13 @@
 import { useState } from "react";
 import {
   useGetProductsQuery,
-  useCreateProductMutation,
-  useUpdateProductMutation,
   useDeleteProductMutation,
   useGetCategoriesQuery,
 } from "@/redux/api/ecommerceApi";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import {
   Dialog,
@@ -42,7 +33,6 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import PriceFormat from "@/components/PriceFormat";
-import Image from "next/image";
 import Link from "next/link";
 
 export default function ProductsManagementPage() {
@@ -58,133 +48,17 @@ export default function ProductsManagementPage() {
   const { data: catData } = useGetCategoriesQuery(undefined);
   const categories = catData?.data || [];
 
-  const [createProduct, { isLoading: isCreating }] = useCreateProductMutation();
-  const [updateProduct, { isLoading: isUpdating }] = useUpdateProductMutation();
   const [deleteProduct, { isLoading: isDeleting }] = useDeleteProductMutation();
 
   // Modal States
-  const [isAddOpen, setIsAddOpen] = useState(false);
-  const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
-  // Form state
-  const [formData, setFormData] = useState({
-    title: "",
-    category: "",
-    brand: "",
-    price: "",
-    discountPercentage: "",
-    stock: "",
-    description: "",
-    thumbnail: "",
-    warrantyInformation: "1 year official warranty",
-    shippingInformation: "Ships in 24 hours",
-    isFeatured: false,
-  });
-
   const products = data?.data || [];
-
-  const handleOpenAdd = () => {
-    setFormData({
-      title: "",
-      category: categories[0]?.name || "Smartphones",
-      brand: "",
-      price: "",
-      discountPercentage: "0",
-      stock: "10",
-      description: "",
-      thumbnail: "",
-      warrantyInformation: "1 year official warranty",
-      shippingInformation: "Ships in 24 hours",
-      isFeatured: false,
-    });
-    setIsAddOpen(true);
-  };
-
-  const handleOpenEdit = (prod: any) => {
-    setSelectedProduct(prod);
-    setFormData({
-      title: prod.title || "",
-      category: prod.category || "",
-      brand: prod.brand || "",
-      price: String(prod.price || ""),
-      discountPercentage: String(prod.discountPercentage || 0),
-      stock: String(prod.stock || 10),
-      description: prod.description || "",
-      thumbnail: prod.thumbnail || "",
-      warrantyInformation: prod.warrantyInformation || "1 year official warranty",
-      shippingInformation: prod.shippingInformation || "Ships in 24 hours",
-      isFeatured: Boolean(prod.isFeatured),
-    });
-    setIsEditOpen(true);
-  };
 
   const handleOpenDelete = (prod: any) => {
     setSelectedProduct(prod);
     setIsDeleteOpen(true);
-  };
-
-  const handleSubmitAdd = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.title || !formData.price || !formData.thumbnail) {
-      toast.error("Please fill in Title, Price, and Thumbnail URL");
-      return;
-    }
-
-    const toastId = toast.loading("Adding new product...");
-    try {
-      const payload = {
-        title: formData.title,
-        category: formData.category || "General",
-        brand: formData.brand || undefined,
-        price: parseFloat(formData.price),
-        discountPercentage: parseFloat(formData.discountPercentage || "0"),
-        stock: parseInt(formData.stock || "10"),
-        description: formData.description || formData.title,
-        thumbnail: formData.thumbnail,
-        images: [formData.thumbnail],
-        warrantyInformation: formData.warrantyInformation,
-        shippingInformation: formData.shippingInformation,
-        isFeatured: formData.isFeatured,
-      };
-
-      await createProduct(payload).unwrap();
-      toast.success("Product created successfully!", { id: toastId });
-      setIsAddOpen(false);
-    } catch (err: any) {
-      console.log("ADD PROD ERROR:", err);
-      toast.error(err?.data?.message || "Failed to create product", { id: toastId });
-    }
-  };
-
-  const handleSubmitEdit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedProduct) return;
-
-    const toastId = toast.loading("Updating product...");
-    try {
-      const payload = {
-        id: selectedProduct.id,
-        title: formData.title,
-        category: formData.category,
-        brand: formData.brand,
-        price: parseFloat(formData.price),
-        discountPercentage: parseFloat(formData.discountPercentage || "0"),
-        stock: parseInt(formData.stock || "10"),
-        description: formData.description,
-        thumbnail: formData.thumbnail,
-        warrantyInformation: formData.warrantyInformation,
-        shippingInformation: formData.shippingInformation,
-        isFeatured: formData.isFeatured,
-      };
-
-      await updateProduct(payload).unwrap();
-      toast.success("Product updated successfully!", { id: toastId });
-      setIsEditOpen(false);
-    } catch (err: any) {
-      toast.error(err?.data?.message || "Failed to update product", { id: toastId });
-    }
   };
 
   const handleDelete = async () => {
@@ -195,7 +69,9 @@ export default function ProductsManagementPage() {
       toast.success("Product deleted successfully!", { id: toastId });
       setIsDeleteOpen(false);
     } catch (err: any) {
-      toast.error(err?.data?.message || "Failed to delete product", { id: toastId });
+      toast.error(err?.data?.message || "Failed to delete product", {
+        id: toastId,
+      });
     }
   };
 
@@ -212,13 +88,12 @@ export default function ProductsManagementPage() {
           </p>
         </div>
 
-        <Button
-          onClick={handleOpenAdd}
-          className="bg-black hover:bg-slate-800 text-white rounded-xl shadow-md flex items-center gap-2 font-semibold h-10 px-4"
-        >
-          <Plus className="h-4 w-4" />
-          Add New Product
-        </Button>
+        <Link href="/dashboard/products/add">
+          <Button className="bg-black hover:bg-slate-800 text-white rounded-xl shadow-md flex items-center gap-2 font-semibold h-10 px-4">
+            <Plus className="h-4 w-4" />
+            Add New Product
+          </Button>
+        </Link>
       </div>
 
       {/* Filter & Search Bar */}
@@ -282,7 +157,10 @@ export default function ProductsManagementPage() {
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {products.map((item: any) => (
-                    <tr key={item.id} className="hover:bg-slate-50/70 transition group">
+                    <tr
+                      key={item.id}
+                      className="hover:bg-slate-50/70 transition group"
+                    >
                       <td className="py-3 px-6">
                         <div className="flex items-center gap-3">
                           <div className="h-12 w-12 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden relative shrink-0">
@@ -308,7 +186,10 @@ export default function ProductsManagementPage() {
                       </td>
 
                       <td className="py-3 px-4">
-                        <Badge variant="secondary" className="bg-slate-100 text-slate-700 text-[10px] font-semibold">
+                        <Badge
+                          variant="secondary"
+                          className="bg-slate-100 text-slate-700 text-[10px] font-semibold"
+                        >
                           {item.category}
                         </Badge>
                       </td>
@@ -330,8 +211,8 @@ export default function ProductsManagementPage() {
                             item.stock > 5
                               ? "bg-emerald-50 text-emerald-700"
                               : item.stock > 0
-                              ? "bg-amber-50 text-amber-700"
-                              : "bg-red-50 text-red-700"
+                                ? "bg-amber-50 text-amber-700"
+                                : "bg-red-50 text-red-700"
                           }`}
                         >
                           {item.stock} in stock
@@ -348,19 +229,24 @@ export default function ProductsManagementPage() {
                       <td className="py-3 px-6 text-right">
                         <div className="flex items-center justify-end gap-1.5">
                           <Link href={`/products/${item.id}`} target="_blank">
-                            <Button size="icon" variant="ghost" className="h-8 w-8 rounded-lg text-slate-400 hover:text-slate-900">
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-8 w-8 rounded-lg text-slate-400 hover:text-slate-900"
+                            >
                               <ExternalLink className="h-3.5 w-3.5" />
                             </Button>
                           </Link>
 
-                          <Button
-                            onClick={() => handleOpenEdit(item)}
-                            size="icon"
-                            variant="ghost"
-                            className="h-8 w-8 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-                          >
-                            <Edit2 className="h-3.5 w-3.5" />
-                          </Button>
+                          <Link href={`/dashboard/products/add?id=${item.id}`}>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-8 w-8 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                            >
+                              <Edit2 className="h-3.5 w-3.5" />
+                            </Button>
+                          </Link>
 
                           <Button
                             onClick={() => handleOpenDelete(item)}
@@ -381,259 +267,17 @@ export default function ProductsManagementPage() {
         </CardContent>
       </Card>
 
-      {/* ================= ADD PRODUCT MODAL ================= */}
-      <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-        <DialogContent className="max-w-xl">
-          <DialogHeader>
-            <DialogTitle>Add New Product</DialogTitle>
-            <DialogDescription>
-              Create a new product listing for your storefront catalog.
-            </DialogDescription>
-          </DialogHeader>
-
-          <form onSubmit={handleSubmitAdd} className="space-y-4 mt-2">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="sm:col-span-2">
-                <label className="text-xs font-semibold text-slate-700">Product Title *</label>
-                <Input
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="e.g. Sony WH-1000XM5 Wireless Headphones"
-                  className="mt-1"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-semibold text-slate-700">Category *</label>
-                <Select
-                  value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="mt-1"
-                >
-                  {categories.map((c: any) => (
-                    <option key={c.id} value={c.name}>
-                      {c.name}
-                    </option>
-                  ))}
-                </Select>
-              </div>
-
-              <div>
-                <label className="text-xs font-semibold text-slate-700">Brand</label>
-                <Input
-                  value={formData.brand}
-                  onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-                  placeholder="e.g. Sony, Apple, Nike"
-                  className="mt-1"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-semibold text-slate-700">Price ($) *</label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={formData.price}
-                  onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                  placeholder="299.99"
-                  className="mt-1"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-semibold text-slate-700">Discount (%)</label>
-                <Input
-                  type="number"
-                  value={formData.discountPercentage}
-                  onChange={(e) => setFormData({ ...formData, discountPercentage: e.target.value })}
-                  placeholder="10"
-                  className="mt-1"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-semibold text-slate-700">Stock Quantity</label>
-                <Input
-                  type="number"
-                  value={formData.stock}
-                  onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
-                  placeholder="25"
-                  className="mt-1"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-semibold text-slate-700">Thumbnail Image URL *</label>
-                <Input
-                  value={formData.thumbnail}
-                  onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
-                  placeholder="https://example.com/image.jpg"
-                  className="mt-1"
-                  required
-                />
-              </div>
-
-              <div className="sm:col-span-2">
-                <label className="text-xs font-semibold text-slate-700">Description</label>
-                <Textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Detailed product highlights, specifications and features..."
-                  className="mt-1"
-                  rows={3}
-                />
-              </div>
-            </div>
-
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setIsAddOpen(false)}
-                className="rounded-xl"
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={isCreating}
-                className="bg-black hover:bg-slate-800 text-white rounded-xl"
-              >
-                {isCreating ? "Saving Product..." : "Create Product"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
-
-      {/* ================= EDIT PRODUCT MODAL ================= */}
-      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="max-w-xl">
-          <DialogHeader>
-            <DialogTitle>Edit Product</DialogTitle>
-            <DialogDescription>
-              Update product details, pricing or inventory stock.
-            </DialogDescription>
-          </DialogHeader>
-
-          <form onSubmit={handleSubmitEdit} className="space-y-4 mt-2">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="sm:col-span-2">
-                <label className="text-xs font-semibold text-slate-700">Product Title *</label>
-                <Input
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="mt-1"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-semibold text-slate-700">Category</label>
-                <Select
-                  value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="mt-1"
-                >
-                  {categories.map((c: any) => (
-                    <option key={c.id} value={c.name}>
-                      {c.name}
-                    </option>
-                  ))}
-                </Select>
-              </div>
-
-              <div>
-                <label className="text-xs font-semibold text-slate-700">Brand</label>
-                <Input
-                  value={formData.brand}
-                  onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-                  className="mt-1"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-semibold text-slate-700">Price ($) *</label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  value={formData.price}
-                  onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                  className="mt-1"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-semibold text-slate-700">Discount (%)</label>
-                <Input
-                  type="number"
-                  value={formData.discountPercentage}
-                  onChange={(e) => setFormData({ ...formData, discountPercentage: e.target.value })}
-                  className="mt-1"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-semibold text-slate-700">Stock Quantity</label>
-                <Input
-                  type="number"
-                  value={formData.stock}
-                  onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
-                  className="mt-1"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-semibold text-slate-700">Thumbnail URL</label>
-                <Input
-                  value={formData.thumbnail}
-                  onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
-                  className="mt-1"
-                />
-              </div>
-
-              <div className="sm:col-span-2">
-                <label className="text-xs font-semibold text-slate-700">Description</label>
-                <Textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="mt-1"
-                  rows={3}
-                />
-              </div>
-            </div>
-
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setIsEditOpen(false)}
-                className="rounded-xl"
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={isUpdating}
-                className="bg-black hover:bg-slate-800 text-white rounded-xl"
-              >
-                {isUpdating ? "Saving..." : "Save Changes"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
-
       {/* ================= DELETE CONFIRM MODAL ================= */}
       <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Delete Product?</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete <span className="font-bold text-slate-900">&quot;{selectedProduct?.title}&quot;</span>? This action cannot be undone.
+              Are you sure you want to delete{" "}
+              <span className="font-bold text-slate-900">
+                &quot;{selectedProduct?.title}&quot;
+              </span>
+              ? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
 

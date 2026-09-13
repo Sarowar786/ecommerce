@@ -1,6 +1,6 @@
 import { notFound } from "@/assets";
 import Container from "@/components/Container";
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/button";
 import Image from "next/image";
 import React from "react";
 

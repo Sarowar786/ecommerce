@@ -27,11 +27,30 @@ export const ecommerceApi = baseApi.injectEndpoints({
       invalidatesTags: ["Product", "Dashboard"],
     }),
     updateProduct: builder.mutation({
-      query: ({ id, ...data }: { id: string; [key: string]: any }) => ({
-        url: `/products/${id}`,
-        method: "PATCH",
-        body: data,
-      }),
+      query: (data) => {
+        let id: string;
+        let body: any;
+        if (data instanceof FormData) {
+          id = data.get("id") as string;
+          data.delete("id");
+          body = data;
+        } else if (data.id && data.data) {
+          id = data.id;
+          if (data.data instanceof FormData) {
+            data.data.delete("id");
+          }
+          body = data.data;
+        } else {
+          const { id: dataId, ...rest } = data;
+          id = dataId;
+          body = rest;
+        }
+        return {
+          url: `/products/${id}`,
+          method: "PATCH",
+          body,
+        };
+      },
       invalidatesTags: ["Product", "Dashboard"],
     }),
     deleteProduct: builder.mutation({

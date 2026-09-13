@@ -14,7 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import {
@@ -59,7 +59,8 @@ export default function OrdersManagementPage() {
     search: searchTerm || undefined,
   });
 
-  const [updateOrderStatus, { isLoading: isUpdating }] = useUpdateOrderStatusMutation();
+  const [updateOrderStatus, { isLoading: isUpdating }] =
+    useUpdateOrderStatusMutation();
 
   const orders = data?.data || [];
 
@@ -76,7 +77,9 @@ export default function OrdersManagementPage() {
         setSelectedOrder((prev: any) => ({ ...prev, orderStatus: newStatus }));
       }
     } catch (err: any) {
-      toast.error(err?.data?.message || "Failed to update status", { id: toastId });
+      toast.error(err?.data?.message || "Failed to update status", {
+        id: toastId,
+      });
     }
   };
 
@@ -167,21 +170,26 @@ export default function OrdersManagementPage() {
                       order.orderStatus === "DELIVERED"
                         ? "success"
                         : order.orderStatus === "SHIPPED"
-                        ? "info"
-                        : order.orderStatus === "PROCESSING"
-                        ? "secondary"
-                        : order.orderStatus === "CANCELLED"
-                        ? "destructive"
-                        : "warning";
+                          ? "info"
+                          : order.orderStatus === "PROCESSING"
+                            ? "secondary"
+                            : order.orderStatus === "CANCELLED"
+                              ? "destructive"
+                              : "warning";
 
-                    const dateStr = new Date(order.createdAt).toLocaleDateString("en-US", {
+                    const dateStr = new Date(
+                      order.createdAt,
+                    ).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
                       year: "numeric",
                     });
 
                     return (
-                      <tr key={order.id} className="hover:bg-slate-50/70 transition">
+                      <tr
+                        key={order.id}
+                        className="hover:bg-slate-50/70 transition"
+                      >
                         <td className="py-3.5 px-6 font-mono text-xs font-bold text-slate-900">
                           {order.orderNumber}
                         </td>
@@ -210,7 +218,9 @@ export default function OrdersManagementPage() {
                         <td className="py-3.5 px-4">
                           <Select
                             value={order.orderStatus}
-                            onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                            onChange={(e) =>
+                              handleStatusChange(order.id, e.target.value)
+                            }
                             className="h-8 text-xs font-bold rounded-lg border-slate-200"
                           >
                             <option value="PENDING">PENDING</option>
@@ -251,7 +261,10 @@ export default function OrdersManagementPage() {
                   Order {selectedOrder?.orderNumber}
                 </DialogTitle>
                 <DialogDescription>
-                  Placed on {selectedOrder ? new Date(selectedOrder.createdAt).toLocaleString() : ""}
+                  Placed on{" "}
+                  {selectedOrder
+                    ? new Date(selectedOrder.createdAt).toLocaleString()
+                    : ""}
                 </DialogDescription>
               </div>
               {selectedOrder && (
@@ -260,12 +273,12 @@ export default function OrdersManagementPage() {
                     selectedOrder.orderStatus === "DELIVERED"
                       ? "success"
                       : selectedOrder.orderStatus === "SHIPPED"
-                      ? "info"
-                      : selectedOrder.orderStatus === "PROCESSING"
-                      ? "secondary"
-                      : selectedOrder.orderStatus === "CANCELLED"
-                      ? "destructive"
-                      : "warning"
+                        ? "info"
+                        : selectedOrder.orderStatus === "PROCESSING"
+                          ? "secondary"
+                          : selectedOrder.orderStatus === "CANCELLED"
+                            ? "destructive"
+                            : "warning"
                   }
                   className="uppercase text-xs font-bold"
                 >
@@ -283,18 +296,32 @@ export default function OrdersManagementPage() {
                   <span className="font-bold text-slate-700 flex items-center gap-1.5 uppercase tracking-wider text-[10px]">
                     <User className="h-3.5 w-3.5" /> Customer Information
                   </span>
-                  <p className="font-bold text-slate-900 text-sm">{selectedOrder.customerName}</p>
-                  <p className="text-slate-500">{selectedOrder.customerEmail}</p>
-                  {selectedOrder.customerPhone && <p className="text-slate-500">{selectedOrder.customerPhone}</p>}
+                  <p className="font-bold text-slate-900 text-sm">
+                    {selectedOrder.customerName}
+                  </p>
+                  <p className="text-slate-500">
+                    {selectedOrder.customerEmail}
+                  </p>
+                  {selectedOrder.customerPhone && (
+                    <p className="text-slate-500">
+                      {selectedOrder.customerPhone}
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-1.5">
                   <span className="font-bold text-slate-700 flex items-center gap-1.5 uppercase tracking-wider text-[10px]">
                     <MapPin className="h-3.5 w-3.5" /> Shipping Address
                   </span>
-                  <p className="font-medium text-slate-800">{selectedOrder.shippingAddress}</p>
+                  <p className="font-medium text-slate-800">
+                    {selectedOrder.shippingAddress}
+                  </p>
                   <p className="text-slate-500">
-                    Payment Method: <span className="font-bold text-slate-800">{selectedOrder.paymentMethod}</span> ({selectedOrder.paymentStatus})
+                    Payment Method:{" "}
+                    <span className="font-bold text-slate-800">
+                      {selectedOrder.paymentMethod}
+                    </span>{" "}
+                    ({selectedOrder.paymentStatus})
                   </p>
                 </div>
               </div>
@@ -306,16 +333,27 @@ export default function OrdersManagementPage() {
                 </h4>
                 <div className="border border-slate-100 rounded-xl divide-y divide-slate-100 overflow-hidden">
                   {selectedOrder.items?.map((item: any) => (
-                    <div key={item.id} className="p-3 flex items-center justify-between text-xs">
+                    <div
+                      key={item.id}
+                      className="p-3 flex items-center justify-between text-xs"
+                    >
                       <div className="flex items-center gap-3">
                         <div className="h-10 w-10 rounded-lg bg-slate-100 overflow-hidden relative shrink-0">
                           {item.image && (
-                            <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
+                            <img
+                              src={item.image}
+                              alt={item.title}
+                              className="h-full w-full object-cover"
+                            />
                           )}
                         </div>
                         <div>
-                          <p className="font-bold text-slate-900">{item.title}</p>
-                          <p className="text-slate-400">Qty: {item.quantity} × ${item.price}</p>
+                          <p className="font-bold text-slate-900">
+                            {item.title}
+                          </p>
+                          <p className="text-slate-400">
+                            Qty: {item.quantity} × ${item.price}
+                          </p>
                         </div>
                       </div>
                       <span className="font-bold text-slate-900 text-sm">
@@ -329,7 +367,9 @@ export default function OrdersManagementPage() {
               {/* Order Summary */}
               <div className="p-4 rounded-xl bg-slate-900 text-white flex items-center justify-between">
                 <div>
-                  <span className="text-xs text-slate-400">Total Order Amount</span>
+                  <span className="text-xs text-slate-400">
+                    Total Order Amount
+                  </span>
                   <div className="text-xl font-black">
                     <PriceFormat amount={selectedOrder.totalAmount} />
                   </div>
@@ -338,7 +378,9 @@ export default function OrdersManagementPage() {
                 <div className="flex items-center gap-2">
                   <Select
                     value={selectedOrder.orderStatus}
-                    onChange={(e) => handleStatusChange(selectedOrder.id, e.target.value)}
+                    onChange={(e) =>
+                      handleStatusChange(selectedOrder.id, e.target.value)
+                    }
                     className="bg-white text-slate-900 text-xs font-bold rounded-lg h-9"
                   >
                     <option value="PENDING">PENDING</option>

@@ -33,24 +33,39 @@ type FieldOption = {
 
 /* Default */
 const DEFAULTS = {
-  maxSize: 5 * 1024 * 1024,
-  allowedTypes: ["image/jpeg", "image/png", "image/webp"],
+  maxSize: 100 * 1024 * 1024,
+  allowedTypes: [
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "image/gif",
+    "image/svg+xml",
+    "video/mp4",
+    "video/webm",
+    "video/quicktime",
+    "video/x-msvideo",
+    "video/mpeg",
+  ],
 };
 
 /* File Filter */
 const fileFilter = (allowedTypes: string[]) => {
   return (_: any, file: Express.Multer.File, cb: any) => {
-    if (allowedTypes.includes(file.mimetype)) {
+    if (
+      allowedTypes.includes(file.mimetype) ||
+      file.mimetype.startsWith("image/") ||
+      file.mimetype.startsWith("video/")
+    ) {
       cb(null, true);
     } else {
-      cb(new ApiError(httpStatus.BAD_REQUEST, "Invalid file type"));
+      cb(new ApiError(httpStatus.BAD_REQUEST, `Invalid file type: ${file.mimetype}`));
     }
   };
 };
 
 /*  Core Uploader Factory */
 const createUploader = (options: {
-  type: "single" | "array" | "fields";
+  type: "single" | "array" | "fields" | "any";
   fieldName?: string;
   fields?: FieldOption[];
 } & UploadOptions) => {
@@ -65,9 +80,11 @@ const createUploader = (options: {
   if (options.type === "single") {
     middleware = upload.single(options.fieldName!);
   } else if (options.type === "array") {
-    middleware = upload.array(options.fieldName!, options.maxCount || 10);
-  } else {
+    middleware = upload.array(options.fieldName!, options.maxCount || 20);
+  } else if (options.type === "fields") {
     middleware = upload.fields(options.fields!);
+  } else {
+    middleware = upload.any();
   }
 
   return (req: Request, res: Response, next: NextFunction) => {
@@ -114,13 +131,10 @@ const createUploader = (options: {
         }
       }
 
-    
-
       next();
     });
   };
 };
-
 
 export const fileUploader = {
   single: (fieldName: string, options?: UploadOptions) =>
@@ -131,4 +145,7 @@ export const fileUploader = {
 
   fields: (fields: FieldOption[], options?: UploadOptions) =>
     createUploader({ type: "fields", fields, ...options }),
+
+  any: (options?: UploadOptions) =>
+    createUploader({ type: "any", ...options }),
 };

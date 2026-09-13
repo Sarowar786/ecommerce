@@ -18,6 +18,14 @@ const nextConfig = {
         protocol: "https",
         hostname: "encrypted-tbn0.gstatic.com",
       },
+      {
+        protocol: "https",
+        hostname: "s3.zenex.cloud",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
+      },
     ],
   },
 };

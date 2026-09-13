@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import {
   DollarSign,
   ShoppingCart,
@@ -28,9 +28,12 @@ import Link from "next/link";
 import PriceFormat from "@/components/PriceFormat";
 
 export default function Overview() {
-  const { data, isLoading, error, refetch } = useGetDashboardOverviewQuery(undefined, {
-    pollingInterval: 30000,
-  });
+  const { data, isLoading, error, refetch } = useGetDashboardOverviewQuery(
+    undefined,
+    {
+      pollingInterval: 30000,
+    },
+  );
 
   const stats = data?.data?.stats || {
     totalRevenue: 0,
@@ -65,7 +68,8 @@ export default function Overview() {
             Store Performance Overview
           </h1>
           <p className="text-slate-300 text-sm">
-            Monitor sales revenue, active customers, orders processing, and inventory status.
+            Monitor sales revenue, active customers, orders processing, and
+            inventory status.
           </p>
         </div>
 
@@ -77,7 +81,10 @@ export default function Overview() {
             </Button>
           </Link>
           <Link href="/dashboard/orders">
-            <Button variant="outline" className="border-white/20 bg-white/10 hover:bg-white/20 text-white rounded-xl h-10 px-4">
+            <Button
+              variant="outline"
+              className="border-white/20 bg-white/10 hover:bg-white/20 text-white rounded-xl h-10 px-4"
+            >
               View All Orders
             </Button>
           </Link>
@@ -124,7 +131,9 @@ export default function Overview() {
               {stats.totalOrders}
             </div>
             <p className="text-xs text-slate-500 mt-1 flex items-center gap-1 font-medium">
-              <span className="text-blue-600 font-bold">Avg ${stats.averageOrderValue}</span>
+              <span className="text-blue-600 font-bold">
+                Avg ${stats.averageOrderValue}
+              </span>
               per customer order
             </p>
           </CardContent>
@@ -145,7 +154,9 @@ export default function Overview() {
               {stats.totalProducts}
             </div>
             <p className="text-xs text-slate-500 mt-1 flex items-center gap-1 font-medium">
-              <span className="text-amber-600 font-bold">{stats.totalCategories || 6} categories</span>
+              <span className="text-amber-600 font-bold">
+                {stats.totalCategories || 6} categories
+              </span>
               in catalog
             </p>
           </CardContent>
@@ -166,7 +177,8 @@ export default function Overview() {
               {stats.totalUsers}
             </div>
             <p className="text-xs text-slate-500 mt-1 flex items-center gap-1 font-medium">
-              <span className="text-purple-600 font-bold">Active</span> verified accounts
+              <span className="text-purple-600 font-bold">Active</span> verified
+              accounts
             </p>
           </CardContent>
         </Card>
@@ -186,7 +198,10 @@ export default function Overview() {
                   Monthly revenue breakdown over the last 6 months
                 </CardDescription>
               </div>
-              <Badge variant="secondary" className="bg-slate-100 text-slate-700 font-semibold">
+              <Badge
+                variant="secondary"
+                className="bg-slate-100 text-slate-700 font-semibold"
+              >
                 Last 6 Months
               </Badge>
             </div>
@@ -200,9 +215,15 @@ export default function Overview() {
               <div className="space-y-4 pt-4">
                 <div className="h-52 flex items-end gap-3 sm:gap-6 px-2">
                   {monthlySales.map((item: any, idx: number) => {
-                    const heightPercent = Math.max(Math.round((item.revenue / maxRevenue) * 100), 8);
+                    const heightPercent = Math.max(
+                      Math.round((item.revenue / maxRevenue) * 100),
+                      8,
+                    );
                     return (
-                      <div key={idx} className="flex-1 flex flex-col items-center gap-2 group">
+                      <div
+                        key={idx}
+                        className="flex-1 flex flex-col items-center gap-2 group"
+                      >
                         <div className="text-[11px] font-bold text-slate-700 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                           ${item.revenue}
                         </div>
@@ -238,7 +259,9 @@ export default function Overview() {
             <div className="flex items-center justify-between p-3 rounded-xl bg-amber-50/70 border border-amber-100">
               <div className="flex items-center gap-2.5">
                 <Clock className="h-4 w-4 text-amber-600" />
-                <span className="text-xs font-bold text-slate-800">Pending</span>
+                <span className="text-xs font-bold text-slate-800">
+                  Pending
+                </span>
               </div>
               <span className="text-xs font-extrabold bg-amber-200/80 text-amber-900 px-2 py-0.5 rounded-full">
                 {statusCounts.pending}
@@ -248,7 +271,9 @@ export default function Overview() {
             <div className="flex items-center justify-between p-3 rounded-xl bg-blue-50/70 border border-blue-100">
               <div className="flex items-center gap-2.5">
                 <Truck className="h-4 w-4 text-blue-600" />
-                <span className="text-xs font-bold text-slate-800">Processing</span>
+                <span className="text-xs font-bold text-slate-800">
+                  Processing
+                </span>
               </div>
               <span className="text-xs font-extrabold bg-blue-200/80 text-blue-900 px-2 py-0.5 rounded-full">
                 {statusCounts.processing}
@@ -258,7 +283,9 @@ export default function Overview() {
             <div className="flex items-center justify-between p-3 rounded-xl bg-indigo-50/70 border border-indigo-100">
               <div className="flex items-center gap-2.5">
                 <Package className="h-4 w-4 text-indigo-600" />
-                <span className="text-xs font-bold text-slate-800">Shipped</span>
+                <span className="text-xs font-bold text-slate-800">
+                  Shipped
+                </span>
               </div>
               <span className="text-xs font-extrabold bg-indigo-200/80 text-indigo-900 px-2 py-0.5 rounded-full">
                 {statusCounts.shipped}
@@ -268,7 +295,9 @@ export default function Overview() {
             <div className="flex items-center justify-between p-3 rounded-xl bg-emerald-50/70 border border-emerald-100">
               <div className="flex items-center gap-2.5">
                 <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                <span className="text-xs font-bold text-slate-800">Delivered</span>
+                <span className="text-xs font-bold text-slate-800">
+                  Delivered
+                </span>
               </div>
               <span className="text-xs font-extrabold bg-emerald-200/80 text-emerald-900 px-2 py-0.5 rounded-full">
                 {statusCounts.delivered}
@@ -278,7 +307,9 @@ export default function Overview() {
             <div className="flex items-center justify-between p-3 rounded-xl bg-red-50/70 border border-red-100">
               <div className="flex items-center gap-2.5">
                 <AlertCircle className="h-4 w-4 text-red-600" />
-                <span className="text-xs font-bold text-slate-800">Cancelled</span>
+                <span className="text-xs font-bold text-slate-800">
+                  Cancelled
+                </span>
               </div>
               <span className="text-xs font-extrabold bg-red-200/80 text-red-900 px-2 py-0.5 rounded-full">
                 {statusCounts.cancelled}
@@ -300,7 +331,11 @@ export default function Overview() {
             </CardDescription>
           </div>
           <Link href="/dashboard/orders">
-            <Button variant="outline" size="sm" className="rounded-xl text-xs font-semibold">
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-xl text-xs font-semibold"
+            >
               View All Orders
             </Button>
           </Link>
@@ -329,15 +364,18 @@ export default function Overview() {
                       order.orderStatus === "DELIVERED"
                         ? "success"
                         : order.orderStatus === "SHIPPED"
-                        ? "info"
-                        : order.orderStatus === "PROCESSING"
-                        ? "secondary"
-                        : order.orderStatus === "CANCELLED"
-                        ? "destructive"
-                        : "warning";
+                          ? "info"
+                          : order.orderStatus === "PROCESSING"
+                            ? "secondary"
+                            : order.orderStatus === "CANCELLED"
+                              ? "destructive"
+                              : "warning";
 
                     return (
-                      <tr key={order.id} className="hover:bg-slate-50/70 transition">
+                      <tr
+                        key={order.id}
+                        className="hover:bg-slate-50/70 transition"
+                      >
                         <td className="py-3.5 px-6 font-mono text-xs font-bold text-slate-900">
                           {order.orderNumber}
                         </td>
@@ -356,13 +394,20 @@ export default function Overview() {
                           <PriceFormat amount={order.totalAmount} />
                         </td>
                         <td className="py-3.5 px-6">
-                          <Badge variant={statusBadgeVariant as any} className="text-[10px] font-bold uppercase">
+                          <Badge
+                            variant={statusBadgeVariant as any}
+                            className="text-[10px] font-bold uppercase"
+                          >
                             {order.orderStatus}
                           </Badge>
                         </td>
                         <td className="py-3.5 px-6 text-right">
                           <Link href={`/dashboard/orders`}>
-                            <Button size="sm" variant="ghost" className="h-8 px-2.5 rounded-lg text-xs">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-8 px-2.5 rounded-lg text-xs"
+                            >
                               <Eye className="h-3.5 w-3.5 mr-1" /> View
                             </Button>
                           </Link>

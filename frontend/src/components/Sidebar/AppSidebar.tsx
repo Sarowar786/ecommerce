@@ -29,7 +29,7 @@ import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { logout } from "@/redux/features/authSlice";
 import { RootState } from "@/redux/store";
-import { Button } from "../ui/Button";
+import { Button } from "../ui/button";
 
 const menuItems = [
   {
@@ -76,7 +76,10 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
     <Sidebar {...props}>
       {/* ================= HEADER ================= */}
       <SidebarHeader>
-        <Link href="/dashboard" className="flex items-center gap-3 px-2 py-3 transition hover:opacity-90">
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-3 px-2 py-3 transition hover:opacity-90"
+        >
           <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-black to-slate-800 text-white flex items-center justify-center font-bold shadow-md">
             <Sparkles className="h-4 w-4 text-amber-400" />
           </div>
@@ -116,8 +119,13 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
                           : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                       }`}
                     >
-                      <Link href={item.url} className="flex items-center gap-3 w-full">
-                        <item.icon className={`w-4 h-4 ${isActive ? "text-amber-400" : "text-slate-400"}`} />
+                      <Link
+                        href={item.url}
+                        className="flex items-center gap-3 w-full"
+                      >
+                        <item.icon
+                          className={`w-4 h-4 ${isActive ? "text-amber-400" : "text-slate-400"}`}
+                        />
                         <span>{item.title}</span>
                       </Link>
                     </SidebarMenuButton>
@@ -139,7 +147,11 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
                   asChild
                   className="text-slate-600 hover:bg-slate-100 hover:text-slate-900 rounded-xl px-3 py-2.5 transition text-sm"
                 >
-                  <Link href="/" className="flex items-center gap-3 w-full" target="_blank">
+                  <Link
+                    href="/"
+                    className="flex items-center gap-3 w-full"
+                    target="_blank"
+                  >
                     <Store className="w-4 h-4 text-emerald-500" />
                     <span>Live Customer Store</span>
                   </Link>

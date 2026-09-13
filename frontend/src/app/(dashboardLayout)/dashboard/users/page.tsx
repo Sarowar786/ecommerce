@@ -13,7 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Users,
@@ -33,7 +33,8 @@ export default function UsersManagementPage() {
     search: searchTerm || undefined,
   });
 
-  const [updateUserStatus, { isLoading: isUpdating }] = useUpdateUserStatusMutation();
+  const [updateUserStatus, { isLoading: isUpdating }] =
+    useUpdateUserStatusMutation();
 
   const users = data?.data || [];
 
@@ -48,7 +49,9 @@ export default function UsersManagementPage() {
       }).unwrap();
       toast.success(`User is now ${newStatus}`, { id: toastId });
     } catch (err: any) {
-      toast.error(err?.data?.message || "Failed to update user status", { id: toastId });
+      toast.error(err?.data?.message || "Failed to update user status", {
+        id: toastId,
+      });
     }
   };
 
@@ -61,7 +64,8 @@ export default function UsersManagementPage() {
             User Accounts
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            Manage registered members, review roles, and control access permissions.
+            Manage registered members, review roles, and control access
+            permissions.
           </p>
         </div>
       </div>
@@ -109,14 +113,20 @@ export default function UsersManagementPage() {
                   {users.map((item: any) => {
                     const isBlocked = item.status === "BLOCKED";
                     const isAdmin = item.role === "ADMIN";
-                    const joined = new Date(item.createdAt).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    });
+                    const joined = new Date(item.createdAt).toLocaleDateString(
+                      "en-US",
+                      {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      },
+                    );
 
                     return (
-                      <tr key={item.id} className="hover:bg-slate-50/70 transition">
+                      <tr
+                        key={item.id}
+                        className="hover:bg-slate-50/70 transition"
+                      >
                         <td className="py-3.5 px-6">
                           <div className="flex items-center gap-3">
                             <div className="h-9 w-9 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-xs uppercase shrink-0">
@@ -137,7 +147,9 @@ export default function UsersManagementPage() {
                           <Badge
                             variant={isAdmin ? "default" : "secondary"}
                             className={`text-[10px] font-bold ${
-                              isAdmin ? "bg-black text-amber-400" : "bg-slate-100 text-slate-700"
+                              isAdmin
+                                ? "bg-black text-amber-400"
+                                : "bg-slate-100 text-slate-700"
                             }`}
                           >
                             {isAdmin ? "👑 ADMIN" : "USER"}
@@ -183,7 +195,8 @@ export default function UsersManagementPage() {
                           >
                             {isBlocked ? (
                               <>
-                                <UserCheck className="h-3.5 w-3.5 mr-1" /> Unblock
+                                <UserCheck className="h-3.5 w-3.5 mr-1" />{" "}
+                                Unblock
                               </>
                             ) : (
                               <>

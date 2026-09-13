@@ -6634,6 +6634,8 @@ export namespace Prisma {
     thumbnail: string | null
     warrantyInformation: string | null
     shippingInformation: string | null
+    deliveryTimeline: string | null
+    video: string | null
     availabilityStatus: string | null
     isFeatured: boolean | null
     status: $Enums.ProductStatus | null
@@ -6656,6 +6658,8 @@ export namespace Prisma {
     thumbnail: string | null
     warrantyInformation: string | null
     shippingInformation: string | null
+    deliveryTimeline: string | null
+    video: string | null
     availabilityStatus: string | null
     isFeatured: boolean | null
     status: $Enums.ProductStatus | null
@@ -6680,6 +6684,10 @@ export namespace Prisma {
     tags: number
     warrantyInformation: number
     shippingInformation: number
+    deliveryTimeline: number
+    specifications: number
+    variants: number
+    video: number
     availabilityStatus: number
     isFeatured: number
     status: number
@@ -6718,6 +6726,8 @@ export namespace Prisma {
     thumbnail?: true
     warrantyInformation?: true
     shippingInformation?: true
+    deliveryTimeline?: true
+    video?: true
     availabilityStatus?: true
     isFeatured?: true
     status?: true
@@ -6740,6 +6750,8 @@ export namespace Prisma {
     thumbnail?: true
     warrantyInformation?: true
     shippingInformation?: true
+    deliveryTimeline?: true
+    video?: true
     availabilityStatus?: true
     isFeatured?: true
     status?: true
@@ -6764,6 +6776,10 @@ export namespace Prisma {
     tags?: true
     warrantyInformation?: true
     shippingInformation?: true
+    deliveryTimeline?: true
+    specifications?: true
+    variants?: true
+    video?: true
     availabilityStatus?: true
     isFeatured?: true
     status?: true
@@ -6875,6 +6891,10 @@ export namespace Prisma {
     tags: string[]
     warrantyInformation: string | null
     shippingInformation: string | null
+    deliveryTimeline: string | null
+    specifications: JsonValue | null
+    variants: JsonValue | null
+    video: string | null
     availabilityStatus: string | null
     isFeatured: boolean
     status: $Enums.ProductStatus
@@ -6918,6 +6938,10 @@ export namespace Prisma {
     tags?: boolean
     warrantyInformation?: boolean
     shippingInformation?: boolean
+    deliveryTimeline?: boolean
+    specifications?: boolean
+    variants?: boolean
+    video?: boolean
     availabilityStatus?: boolean
     isFeatured?: boolean
     status?: boolean
@@ -6944,6 +6968,10 @@ export namespace Prisma {
     tags?: boolean
     warrantyInformation?: boolean
     shippingInformation?: boolean
+    deliveryTimeline?: boolean
+    specifications?: boolean
+    variants?: boolean
+    video?: boolean
     availabilityStatus?: boolean
     isFeatured?: boolean
     status?: boolean
@@ -6951,7 +6979,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "slug" | "description" | "price" | "discountPercentage" | "rating" | "stock" | "brand" | "category" | "categoryId" | "thumbnail" | "images" | "tags" | "warrantyInformation" | "shippingInformation" | "availabilityStatus" | "isFeatured" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "slug" | "description" | "price" | "discountPercentage" | "rating" | "stock" | "brand" | "category" | "categoryId" | "thumbnail" | "images" | "tags" | "warrantyInformation" | "shippingInformation" | "deliveryTimeline" | "specifications" | "variants" | "video" | "availabilityStatus" | "isFeatured" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
 
   export type $ProductPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Product"
@@ -6973,6 +7001,10 @@ export namespace Prisma {
       tags: string[]
       warrantyInformation: string | null
       shippingInformation: string | null
+      deliveryTimeline: string | null
+      specifications: Prisma.JsonValue | null
+      variants: Prisma.JsonValue | null
+      video: string | null
       availabilityStatus: string | null
       isFeatured: boolean
       status: $Enums.ProductStatus
@@ -7386,6 +7418,10 @@ export namespace Prisma {
     readonly tags: FieldRef<"Product", 'String[]'>
     readonly warrantyInformation: FieldRef<"Product", 'String'>
     readonly shippingInformation: FieldRef<"Product", 'String'>
+    readonly deliveryTimeline: FieldRef<"Product", 'String'>
+    readonly specifications: FieldRef<"Product", 'Json'>
+    readonly variants: FieldRef<"Product", 'Json'>
+    readonly video: FieldRef<"Product", 'String'>
     readonly availabilityStatus: FieldRef<"Product", 'String'>
     readonly isFeatured: FieldRef<"Product", 'Boolean'>
     readonly status: FieldRef<"Product", 'ProductStatus'>
@@ -10059,6 +10095,10 @@ export namespace Prisma {
     tags: 'tags',
     warrantyInformation: 'warrantyInformation',
     shippingInformation: 'shippingInformation',
+    deliveryTimeline: 'deliveryTimeline',
+    specifications: 'specifications',
+    variants: 'variants',
+    video: 'video',
     availabilityStatus: 'availabilityStatus',
     isFeatured: 'isFeatured',
     status: 'status',
@@ -10227,6 +10267,13 @@ export namespace Prisma {
    * Reference to a field of type 'Int[]'
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
     
 
 
@@ -10654,6 +10701,10 @@ export namespace Prisma {
     tags?: StringNullableListFilter<"Product">
     warrantyInformation?: StringNullableFilter<"Product"> | string | null
     shippingInformation?: StringNullableFilter<"Product"> | string | null
+    deliveryTimeline?: StringNullableFilter<"Product"> | string | null
+    specifications?: JsonNullableFilter<"Product">
+    variants?: JsonNullableFilter<"Product">
+    video?: StringNullableFilter<"Product"> | string | null
     availabilityStatus?: StringNullableFilter<"Product"> | string | null
     isFeatured?: BoolFilter<"Product"> | boolean
     status?: EnumProductStatusFilter<"Product"> | $Enums.ProductStatus
@@ -10678,6 +10729,10 @@ export namespace Prisma {
     tags?: SortOrder
     warrantyInformation?: SortOrder
     shippingInformation?: SortOrder
+    deliveryTimeline?: SortOrder
+    specifications?: SortOrder
+    variants?: SortOrder
+    video?: SortOrder
     availabilityStatus?: SortOrder
     isFeatured?: SortOrder
     status?: SortOrder
@@ -10705,6 +10760,10 @@ export namespace Prisma {
     tags?: StringNullableListFilter<"Product">
     warrantyInformation?: StringNullableFilter<"Product"> | string | null
     shippingInformation?: StringNullableFilter<"Product"> | string | null
+    deliveryTimeline?: StringNullableFilter<"Product"> | string | null
+    specifications?: JsonNullableFilter<"Product">
+    variants?: JsonNullableFilter<"Product">
+    video?: StringNullableFilter<"Product"> | string | null
     availabilityStatus?: StringNullableFilter<"Product"> | string | null
     isFeatured?: BoolFilter<"Product"> | boolean
     status?: EnumProductStatusFilter<"Product"> | $Enums.ProductStatus
@@ -10729,6 +10788,10 @@ export namespace Prisma {
     tags?: SortOrder
     warrantyInformation?: SortOrder
     shippingInformation?: SortOrder
+    deliveryTimeline?: SortOrder
+    specifications?: SortOrder
+    variants?: SortOrder
+    video?: SortOrder
     availabilityStatus?: SortOrder
     isFeatured?: SortOrder
     status?: SortOrder
@@ -10761,6 +10824,10 @@ export namespace Prisma {
     tags?: StringNullableListFilter<"Product">
     warrantyInformation?: StringNullableWithAggregatesFilter<"Product"> | string | null
     shippingInformation?: StringNullableWithAggregatesFilter<"Product"> | string | null
+    deliveryTimeline?: StringNullableWithAggregatesFilter<"Product"> | string | null
+    specifications?: JsonNullableWithAggregatesFilter<"Product">
+    variants?: JsonNullableWithAggregatesFilter<"Product">
+    video?: StringNullableWithAggregatesFilter<"Product"> | string | null
     availabilityStatus?: StringNullableWithAggregatesFilter<"Product"> | string | null
     isFeatured?: BoolWithAggregatesFilter<"Product"> | boolean
     status?: EnumProductStatusWithAggregatesFilter<"Product"> | $Enums.ProductStatus
@@ -11360,6 +11427,10 @@ export namespace Prisma {
     tags?: ProductCreatetagsInput | string[]
     warrantyInformation?: string | null
     shippingInformation?: string | null
+    deliveryTimeline?: string | null
+    specifications?: InputJsonValue | null
+    variants?: InputJsonValue | null
+    video?: string | null
     availabilityStatus?: string | null
     isFeatured?: boolean
     status?: $Enums.ProductStatus
@@ -11384,6 +11455,10 @@ export namespace Prisma {
     tags?: ProductCreatetagsInput | string[]
     warrantyInformation?: string | null
     shippingInformation?: string | null
+    deliveryTimeline?: string | null
+    specifications?: InputJsonValue | null
+    variants?: InputJsonValue | null
+    video?: string | null
     availabilityStatus?: string | null
     isFeatured?: boolean
     status?: $Enums.ProductStatus
@@ -11407,6 +11482,10 @@ export namespace Prisma {
     tags?: ProductUpdatetagsInput | string[]
     warrantyInformation?: NullableStringFieldUpdateOperationsInput | string | null
     shippingInformation?: NullableStringFieldUpdateOperationsInput | string | null
+    deliveryTimeline?: NullableStringFieldUpdateOperationsInput | string | null
+    specifications?: InputJsonValue | InputJsonValue | null
+    variants?: InputJsonValue | InputJsonValue | null
+    video?: NullableStringFieldUpdateOperationsInput | string | null
     availabilityStatus?: NullableStringFieldUpdateOperationsInput | string | null
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     status?: EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -11430,6 +11509,10 @@ export namespace Prisma {
     tags?: ProductUpdatetagsInput | string[]
     warrantyInformation?: NullableStringFieldUpdateOperationsInput | string | null
     shippingInformation?: NullableStringFieldUpdateOperationsInput | string | null
+    deliveryTimeline?: NullableStringFieldUpdateOperationsInput | string | null
+    specifications?: InputJsonValue | InputJsonValue | null
+    variants?: InputJsonValue | InputJsonValue | null
+    video?: NullableStringFieldUpdateOperationsInput | string | null
     availabilityStatus?: NullableStringFieldUpdateOperationsInput | string | null
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     status?: EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -11454,6 +11537,10 @@ export namespace Prisma {
     tags?: ProductCreatetagsInput | string[]
     warrantyInformation?: string | null
     shippingInformation?: string | null
+    deliveryTimeline?: string | null
+    specifications?: InputJsonValue | null
+    variants?: InputJsonValue | null
+    video?: string | null
     availabilityStatus?: string | null
     isFeatured?: boolean
     status?: $Enums.ProductStatus
@@ -11477,6 +11564,10 @@ export namespace Prisma {
     tags?: ProductUpdatetagsInput | string[]
     warrantyInformation?: NullableStringFieldUpdateOperationsInput | string | null
     shippingInformation?: NullableStringFieldUpdateOperationsInput | string | null
+    deliveryTimeline?: NullableStringFieldUpdateOperationsInput | string | null
+    specifications?: InputJsonValue | InputJsonValue | null
+    variants?: InputJsonValue | InputJsonValue | null
+    video?: NullableStringFieldUpdateOperationsInput | string | null
     availabilityStatus?: NullableStringFieldUpdateOperationsInput | string | null
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     status?: EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -11500,6 +11591,10 @@ export namespace Prisma {
     tags?: ProductUpdatetagsInput | string[]
     warrantyInformation?: NullableStringFieldUpdateOperationsInput | string | null
     shippingInformation?: NullableStringFieldUpdateOperationsInput | string | null
+    deliveryTimeline?: NullableStringFieldUpdateOperationsInput | string | null
+    specifications?: InputJsonValue | InputJsonValue | null
+    variants?: InputJsonValue | InputJsonValue | null
+    video?: NullableStringFieldUpdateOperationsInput | string | null
     availabilityStatus?: NullableStringFieldUpdateOperationsInput | string | null
     isFeatured?: BoolFieldUpdateOperationsInput | boolean
     status?: EnumProductStatusFieldUpdateOperationsInput | $Enums.ProductStatus
@@ -12111,6 +12206,18 @@ export namespace Prisma {
     hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
     isEmpty?: boolean
   }
+  export type JsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    isSet?: boolean
+  }
 
   export type EnumProductStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.ProductStatus | EnumProductStatusFieldRefInput<$PrismaModel>
@@ -12136,6 +12243,10 @@ export namespace Prisma {
     tags?: SortOrder
     warrantyInformation?: SortOrder
     shippingInformation?: SortOrder
+    deliveryTimeline?: SortOrder
+    specifications?: SortOrder
+    variants?: SortOrder
+    video?: SortOrder
     availabilityStatus?: SortOrder
     isFeatured?: SortOrder
     status?: SortOrder
@@ -12165,6 +12276,8 @@ export namespace Prisma {
     thumbnail?: SortOrder
     warrantyInformation?: SortOrder
     shippingInformation?: SortOrder
+    deliveryTimeline?: SortOrder
+    video?: SortOrder
     availabilityStatus?: SortOrder
     isFeatured?: SortOrder
     status?: SortOrder
@@ -12187,6 +12300,8 @@ export namespace Prisma {
     thumbnail?: SortOrder
     warrantyInformation?: SortOrder
     shippingInformation?: SortOrder
+    deliveryTimeline?: SortOrder
+    video?: SortOrder
     availabilityStatus?: SortOrder
     isFeatured?: SortOrder
     status?: SortOrder
@@ -12231,6 +12346,21 @@ export namespace Prisma {
     _sum?: NestedIntFilter<$PrismaModel>
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
+    isSet?: boolean
   }
 
   export type EnumProductStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -12895,6 +13025,18 @@ export namespace Prisma {
     _sum?: NestedIntFilter<$PrismaModel>
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
+  }
+  export type NestedJsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    isSet?: boolean
   }
 
   export type NestedEnumProductStatusWithAggregatesFilter<$PrismaModel = never> = {
