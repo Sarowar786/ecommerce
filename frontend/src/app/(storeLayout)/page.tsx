@@ -2,6 +2,7 @@ import BottomHeader from "@/components/header/BottomHeader";
 import Banner from "@/components/pages/home/Banner";
 import ProductList from "@/components/ProductList";
 import { getData } from "@/app/helpers";
+import FeaturedCategory from "@/components/pages/home/FeaturedCategory";
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +25,7 @@ export default async function Home() {
   return (
     <main>
       <Banner />
+      <FeaturedCategory/>
       <ProductList product={{ products: products || [] }} />
     </main>
   );

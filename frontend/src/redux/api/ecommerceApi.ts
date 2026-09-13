@@ -69,6 +69,13 @@ export const ecommerceApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Category"],
     }),
+    getCategoriesWithProductCount: builder.query({
+      query: () => ({
+        url: "/categories",
+        method: "GET",
+      }),
+      providesTags: ["Category"],
+    }),
     createCategory: builder.mutation({
       query: (data) => ({
         url: "/categories",
@@ -164,6 +171,7 @@ export const {
   useUpdateProductMutation,
   useDeleteProductMutation,
   useGetCategoriesQuery,
+  useGetCategoriesWithProductCountQuery,
   useCreateCategoryMutation,
   useUpdateCategoryMutation,
   useDeleteCategoryMutation,
