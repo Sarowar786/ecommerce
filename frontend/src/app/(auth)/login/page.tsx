@@ -240,7 +240,7 @@ function LoginForm() {
             </Button>
 
             {/* Demo Credentials Card */}
-            <div className="mt-4 p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1.5">
+            {/* <div className="mt-4 p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1.5">
               <div className="flex items-center justify-between text-slate-700">
                 <span className="font-semibold text-amber-700">👑 Admin (Dashboard):</span>
                 <span className="font-mono text-[11px]">sarowar2287@gmail.com / 12345678</span>
@@ -249,7 +249,7 @@ function LoginForm() {
                 <span className="font-semibold text-emerald-700">🛍️ Customer (Store):</span>
                 <span className="font-mono text-[11px]">customer@shofy.com / 12345678</span>
               </div>
-            </div>
+            </div> */}
 
             {/* Footer */}
             <p className="text-center text-sm text-slate-500 mt-6">
