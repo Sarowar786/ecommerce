@@ -173,7 +173,7 @@ export default function ProductsCatalogPage() {
               <div className="flex flex-wrap items-center gap-1.5">
                 {filters.searchTerm && (
                   <span className="inline-flex items-center gap-1 text-[11px] bg-sky-100 text-sky-900 px-2.5 py-1 rounded-lg font-medium border border-sky-200">
-                    Search: "{filters.searchTerm}"
+                    Search: &quot;{filters.searchTerm}&quot;
                     <button
                       onClick={() => {
                         handleFilterChange({ searchTerm: "" });

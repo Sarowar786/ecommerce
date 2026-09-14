@@ -7,7 +7,6 @@ import {
   X,
   Loader2,
   ArrowRight,
-  TrendingUp,
   Clock,
   PackageSearch,
   ShoppingBag,
@@ -21,15 +20,6 @@ interface GlobalSearchProps {
   isMobile?: boolean;
   onCloseMobile?: () => void;
 }
-
-const POPULAR_SEARCHES = [
-  "iPhone",
-  "Laptop",
-  "Headphones",
-  "Smart Watch",
-  "Sneakers",
-  "Backpack",
-];
 
 const RECENT_SEARCHES_KEY = "shopping_recent_searches";
 
@@ -380,7 +370,7 @@ export default function GlobalSearch({
                       onClick={() => handleSearchSubmit()}
                       className="w-full py-2.5 px-4 bg-slate-900 hover:bg-black text-white text-xs font-semibold rounded-xl flex items-center justify-center gap-2 shadow-xs transition"
                     >
-                      <span>View all results for "{debouncedSearch}"</span>
+                      <span>View all results for &quot;{debouncedSearch}&quot;</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -395,11 +385,11 @@ export default function GlobalSearch({
                     No products found
                   </h4>
                   <p className="text-xs text-slate-500 mt-1 max-w-xs mx-auto">
-                    We couldn't find any products matching "
+                    We couldn&apos;t find any products matching &quot;
                     <span className="font-semibold text-slate-800">
                       {debouncedSearch}
                     </span>
-                    ". Try checking for typos or use broader search terms.
+                    &quot;. Try checking for typos or use broader search terms.
                   </p>
                   <button
                     type="button"
