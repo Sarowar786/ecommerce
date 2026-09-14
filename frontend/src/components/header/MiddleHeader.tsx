@@ -24,6 +24,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { LayoutDashboard, LogOut, Package, User } from "lucide-react";
+import GlobalSearch from "./GlobalSearch";
 
 const MiddleHeader = () => {
   const dispatch = useDispatch();
@@ -31,7 +32,7 @@ const MiddleHeader = () => {
   const { cart, favoriteProduct } = useSelector((state: StateType) => state?.shopy || { cart: [], favoriteProduct: [] });
   const authUser = useSelector((state: RootState) => state.auth?.user);
 
-  const [searchValue, setSearchValue] = useState("");
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
 
   const handleLogOut = () => {
     dispatch(logout());
@@ -41,47 +42,17 @@ const MiddleHeader = () => {
 
   return (
     <div className="border-b-[1px] border-b-gray-200 bg-white sticky top-0 z-40">
-      <Container className="py-4 flex items-center gap-4 md:gap-6 lg:gap-12 justify-between">
+      <Container className="py-3.5 flex items-center gap-4 md:gap-6 lg:gap-12 justify-between">
         <Link href={"/"} className="shrink-0">
           <Image src={logo} alt="logo" className="w-28" />
         </Link>
 
-        {/* Search */}
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (searchValue.trim()) {
-              router.push(`/products?searchTerm=${encodeURIComponent(searchValue.trim())}`);
-            } else {
-              router.push("/products");
-            }
-          }}
-          className="hidden md:inline-flex flex-1 max-w-xl h-10 relative"
-        >
-          <input
-            type="text"
-            placeholder="Search products, brands and categories..."
-            className="w-full h-full outline-none border border-slate-300 rounded-full px-4 pr-12 text-sm focus:border-black transition"
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-          />
+        {/* Global Search - Desktop */}
+        <div className="hidden md:block flex-1 max-w-xl">
+          <GlobalSearch />
+        </div>
 
-          {searchValue && (
-            <RiCloseLine
-              onClick={() => setSearchValue("")}
-              className="text-lg absolute top-2.5 right-12 text-gray-400 hover:text-red-500 cursor-pointer duration-200"
-            />
-          )}
-
-          <button
-            type="submit"
-            className="w-8 h-8 bg-black rounded-full inline-flex items-center justify-center text-white absolute top-1 right-1 hover:bg-slate-800 duration-200"
-          >
-            <RiSearchLine className="text-sm" />
-          </button>
-        </form>
-
-        {/* Actions */}
+        {/* Actions - Desktop */}
         <div className="hidden md:inline-flex items-center gap-5">
           {/* Admin Dashboard Pill */}
           {authUser?.role === "ADMIN" && (
@@ -159,11 +130,49 @@ const MiddleHeader = () => {
           </Link>
         </div>
 
-        {/* Mobile menu icon */}
-        <div className="text-2xl md:hidden text-slate-700 hover:text-black cursor-pointer">
-          <RiMenu3Fill />
+        {/* Mobile Actions */}
+        <div className="flex items-center gap-3 md:hidden">
+          {/* Mobile Search Toggle */}
+          <button
+            type="button"
+            onClick={() => setIsMobileSearchOpen((prev) => !prev)}
+            className={`p-2 rounded-full transition ${
+              isMobileSearchOpen
+                ? "bg-slate-900 text-white"
+                : "text-slate-700 hover:bg-slate-100"
+            }`}
+            aria-label="Toggle Search"
+          >
+            <RiSearchLine className="text-lg" />
+          </button>
+
+          {/* Mobile Cart */}
+          <Link
+            href="/cart"
+            className="text-2xl relative text-slate-700 hover:text-black transition p-1"
+          >
+            <BiShoppingBag />
+            <span className="absolute -top-1 -right-1 text-[10px] font-bold w-4 h-4 bg-black text-white rounded-full flex items-center justify-center">
+              {cart?.length || 0}
+            </span>
+          </Link>
+
+          {/* Mobile menu icon */}
+          <div className="text-2xl text-slate-700 hover:text-black cursor-pointer p-1">
+            <RiMenu3Fill />
+          </div>
         </div>
       </Container>
+
+      {/* Expandable Mobile Search Bar */}
+      {isMobileSearchOpen && (
+        <div className="md:hidden border-t border-slate-100 bg-slate-50/95 px-4 py-3 shadow-inner">
+          <GlobalSearch
+            isMobile={true}
+            onCloseMobile={() => setIsMobileSearchOpen(false)}
+          />
+        </div>
+      )}
     </div>
   );
 };

@@ -69,7 +69,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
   const handleLogOut = () => {
     dispatch(logout());
     toast.success("Logged out successfully");
-    router.push("/login");
+    router.push("/");
   };
 
   return (

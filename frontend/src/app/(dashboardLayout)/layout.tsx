@@ -11,7 +11,6 @@ import {
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { useRouter } from "next/navigation";
-import { Bell, Search, ShieldCheck, User } from "lucide-react";
 import Link from "next/link";
 import Cookies from "js-cookie";
 
@@ -61,11 +60,6 @@ export default function DashboardLayout({
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 text-slate-500 text-xs">
-              <ShieldCheck className="h-4 w-4 text-emerald-600" />
-              <span>System Live & Connected</span>
-            </div>
-
             <Link
               href="/"
               className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 transition"
