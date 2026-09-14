@@ -74,6 +74,11 @@ const createCategory = async (
 
 const getAllCategories = async () => {
   const categories = await prisma.category.findMany({
+    include: {
+      subcategories: {
+        orderBy: { name: "asc" },
+      },
+    },
     orderBy: { name: "asc" },
   });
 
@@ -87,9 +92,28 @@ const getAllCategories = async () => {
           ],
         },
       });
+
+      const subcategoriesWithCount = await Promise.all(
+        (c.subcategories || []).map(async (sub) => {
+          const subProductsCount = await prisma.product.count({
+            where: {
+              OR: [
+                { subcategory: sub.name },
+                { subcategoryId: sub.id },
+              ],
+            },
+          });
+          return {
+            ...sub,
+            productsCount: subProductsCount,
+          };
+        })
+      );
+
       return {
         ...c,
         productsCount,
+        subcategories: subcategoriesWithCount,
       };
     })
   );
@@ -98,8 +122,16 @@ const getAllCategories = async () => {
 };
 
 const getCategoryById = async (id: string) => {
-  const category = await prisma.category.findUnique({
-    where: { id },
+  const category = await prisma.category.findFirst({
+    where: {
+      OR: [
+        { id: id.match(/^[0-9a-fA-F]{24}$/) ? id : undefined },
+        { slug: id },
+      ].filter(Boolean) as any,
+    },
+    include: {
+      subcategories: true,
+    },
   });
 
   if (!category) {

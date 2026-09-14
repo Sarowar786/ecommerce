@@ -11,6 +11,8 @@ import Container from "@/components/Container";
 
 const DEFAULT_FILTERS: FilterState = {
   categoryId: "",
+  subcategory: "",
+  subcategoryId: "",
   min_price: "",
   max_price: "",
   sortby: "recent",
@@ -24,11 +26,13 @@ export default function ProductsCatalogPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialCategory = searchParams.get("category") || searchParams.get("categoryId") || "";
+  const initialSubcategory = searchParams.get("subcategory") || searchParams.get("subcategoryId") || "";
 
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<FilterState>({
     ...DEFAULT_FILTERS,
     categoryId: initialCategory,
+    subcategory: initialSubcategory,
     searchTerm: searchParams.get("searchTerm") || searchParams.get("search") || "",
   });
 
@@ -46,6 +50,7 @@ export default function ProductsCatalogPage() {
   // Sync with searchParams when navigating or loading from external link (e.g. FeaturedCategory on homepage)
   useEffect(() => {
     const category = searchParams.get("category") || searchParams.get("categoryId") || "";
+    const subcategory = searchParams.get("subcategory") || searchParams.get("subcategoryId") || "";
     const min_price = searchParams.get("min_price") || searchParams.get("minPrice") || "";
     const max_price = searchParams.get("max_price") || searchParams.get("maxPrice") || "";
     const sortby = searchParams.get("sortby") || searchParams.get("sortBy") || "recent";
@@ -54,6 +59,7 @@ export default function ProductsCatalogPage() {
 
     setFilters({
       categoryId: category,
+      subcategory,
       min_price,
       max_price,
       sortby,
@@ -71,6 +77,12 @@ export default function ProductsCatalogPage() {
       ? {
           category: matchedCat ? matchedCat.slug || matchedCat.name : filters.categoryId,
           categoryId: matchedCat ? matchedCat.id : filters.categoryId,
+        }
+      : {}),
+    ...(filters.subcategory
+      ? {
+          subcategory: filters.subcategory,
+          subcategoryId: filters.subcategory,
         }
       : {}),
     ...(filters.min_price ? { minPrice: filters.min_price } : {}),
@@ -95,6 +107,7 @@ export default function ProductsCatalogPage() {
       // Keep URL search params in sync
       const params = new URLSearchParams();
       if (next.categoryId) params.set("category", next.categoryId);
+      if (next.subcategory) params.set("subcategory", next.subcategory);
       if (next.min_price) params.set("min_price", next.min_price);
       if (next.max_price) params.set("max_price", next.max_price);
       if (next.sortby && next.sortby !== "recent") params.set("sortby", next.sortby);
@@ -190,9 +203,23 @@ export default function ProductsCatalogPage() {
                   <span className="inline-flex items-center gap-1 text-[11px] bg-slate-900 text-white px-2.5 py-1 rounded-lg font-medium">
                     Category: {activeCategoryDisplayName}
                     <button
-                      onClick={() => handleFilterChange({ categoryId: "" })}
+                      onClick={() =>
+                        handleFilterChange({ categoryId: "", subcategory: "" })
+                      }
                       className="ml-1 hover:text-red-300 font-bold"
                       title="Clear category"
+                    >
+                      &times;
+                    </button>
+                  </span>
+                )}
+                {filters.subcategory && (
+                  <span className="inline-flex items-center gap-1 text-[11px] bg-slate-800 text-slate-100 px-2.5 py-1 rounded-lg font-medium">
+                    Subcategory: {filters.subcategory}
+                    <button
+                      onClick={() => handleFilterChange({ subcategory: "" })}
+                      className="ml-1 hover:text-red-300 font-bold"
+                      title="Clear subcategory"
                     >
                       &times;
                     </button>

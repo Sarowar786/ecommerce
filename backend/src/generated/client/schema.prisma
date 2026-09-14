@@ -81,15 +81,31 @@ model PasswordResetToken {
 }
 
 model Category {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  name          String        @unique
+  slug          String        @unique
+  image         String?
+  description   String?
+  subcategories Subcategory[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@map("categories")
+}
+
+model Subcategory {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  name        String   @unique
+  name        String
   slug        String   @unique
   image       String?
   description String?
+  categoryId  String   @db.ObjectId
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  @@map("categories")
+  @@index([categoryId])
+  @@map("subcategories")
 }
 
 model Product {
@@ -104,6 +120,8 @@ model Product {
   brand               String?
   category            String
   categoryId          String?       @db.ObjectId
+  subcategory         String?
+  subcategoryId       String?       @db.ObjectId
   thumbnail           String
   images              String[]      @default([])
   tags                String[]      @default([])

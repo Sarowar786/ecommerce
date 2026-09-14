@@ -172,6 +172,17 @@ exports.Prisma.CategoryScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.SubcategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  image: 'image',
+  description: 'description',
+  categoryId: 'categoryId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.ProductScalarFieldEnum = {
   id: 'id',
   title: 'title',
@@ -184,6 +195,8 @@ exports.Prisma.ProductScalarFieldEnum = {
   brand: 'brand',
   category: 'category',
   categoryId: 'categoryId',
+  subcategory: 'subcategory',
+  subcategoryId: 'subcategoryId',
   thumbnail: 'thumbnail',
   images: 'images',
   tags: 'tags',
@@ -299,6 +312,7 @@ exports.Prisma.ModelName = {
   AuthChallenge: 'AuthChallenge',
   PasswordResetToken: 'PasswordResetToken',
   Category: 'Category',
+  Subcategory: 'Subcategory',
   Product: 'Product',
   Order: 'Order',
   OrderItem: 'OrderItem',

@@ -9,6 +9,9 @@ export interface ProductType {
   stock: number;
   brand?: string;
   category: string;
+  categoryId?: string;
+  subcategory?: string;
+  subcategoryId?: string;
   thumbnail: string;
   images: string[];
   tags?: string[];
@@ -33,6 +36,35 @@ export interface ProductType {
   sku?: string;
   weight?: number;
   quantity?: number;
+}
+
+export interface SubcategoryType {
+  id: string;
+  name: string;
+  slug: string;
+  image?: string;
+  description?: string;
+  categoryId: string;
+  category?: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+  productsCount?: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CategoryType {
+  id: string;
+  name: string;
+  slug: string;
+  image?: string;
+  description?: string;
+  productsCount?: number;
+  subcategories?: SubcategoryType[];
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface StateType {

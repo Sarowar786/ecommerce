@@ -118,6 +118,19 @@ const createProduct = async (files: Express.Multer.File[] | undefined, payload: 
   }
   if (!category) category = "General";
 
+  // Resolve subcategory name from subcategoryId or vice versa
+  let subcategory = cleanPayload.subcategory;
+  let subcategoryId = cleanPayload.subcategoryId;
+  if (!subcategory && subcategoryId) {
+    const subDoc = await prisma.subcategory.findUnique({ where: { id: subcategoryId } });
+    if (subDoc) subcategory = subDoc.name;
+  } else if (subcategory && !subcategoryId) {
+    const subDoc = await prisma.subcategory.findFirst({
+      where: { name: { equals: subcategory, mode: "insensitive" } },
+    });
+    if (subDoc) subcategoryId = subDoc.id;
+  }
+
   const product = await prisma.product.create({
     data: {
       title,
@@ -130,6 +143,8 @@ const createProduct = async (files: Express.Multer.File[] | undefined, payload: 
       brand: cleanPayload.brand || undefined,
       category,
       categoryId: categoryId || undefined,
+      subcategory: subcategory || undefined,
+      subcategoryId: subcategoryId || undefined,
       thumbnail,
       images: images.length > 0 ? images : (thumbnail ? [thumbnail] : []),
       tags: Array.isArray(cleanPayload.tags) ? cleanPayload.tags : [],
@@ -156,6 +171,8 @@ const getAllProducts = async (query: {
   q?: string;
   category?: string;
   categoryId?: string;
+  subcategory?: string;
+  subcategoryId?: string;
   brand?: string;
   isFeatured?: string;
   minPrice?: string | number;
@@ -216,6 +233,38 @@ const getAllProducts = async (query: {
       } else {
         andConditions.push({
           category: { equals: categoryParam, mode: "insensitive" },
+        });
+      }
+    }
+  }
+
+  // 2b. Subcategory filter by subcategoryId or slug/name
+  const subcategoryParam = (query.subcategoryId || query.subcategory)?.toString()?.trim();
+  if (subcategoryParam && subcategoryParam !== "") {
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(subcategoryParam);
+
+    if (isObjectId) {
+      andConditions.push({ subcategoryId: subcategoryParam });
+    } else {
+      const matchedSub = await prisma.subcategory.findFirst({
+        where: {
+          OR: [
+            { slug: { equals: subcategoryParam, mode: "insensitive" } },
+            { name: { equals: subcategoryParam, mode: "insensitive" } },
+          ],
+        },
+      });
+
+      if (matchedSub) {
+        andConditions.push({
+          OR: [
+            { subcategoryId: matchedSub.id },
+            { subcategory: { equals: matchedSub.name, mode: "insensitive" } },
+          ],
+        });
+      } else {
+        andConditions.push({
+          subcategory: { equals: subcategoryParam, mode: "insensitive" },
         });
       }
     }
@@ -407,6 +456,13 @@ const updateProduct = async (id: string, files: Express.Multer.File[] | undefine
     if (catDoc) category = catDoc.name;
   }
 
+  let subcategory = cleanPayload.subcategory !== undefined ? cleanPayload.subcategory : existing.subcategory;
+  let subcategoryId = cleanPayload.subcategoryId !== undefined ? cleanPayload.subcategoryId : existing.subcategoryId;
+  if (cleanPayload.subcategoryId && !cleanPayload.subcategory) {
+    const subDoc = await prisma.subcategory.findUnique({ where: { id: cleanPayload.subcategoryId } });
+    if (subDoc) subcategory = subDoc.name;
+  }
+
   const updateData: any = {
     title: cleanPayload.title || cleanPayload.productName || existing.title,
     description: cleanPayload.description !== undefined ? cleanPayload.description : existing.description,
@@ -417,6 +473,8 @@ const updateProduct = async (id: string, files: Express.Multer.File[] | undefine
     brand: cleanPayload.brand !== undefined ? cleanPayload.brand : existing.brand,
     category,
     categoryId,
+    subcategory,
+    subcategoryId,
     thumbnail,
     images,
     warrantyInformation: cleanPayload.warrantyInformation !== undefined ? cleanPayload.warrantyInformation : existing.warrantyInformation,

@@ -110,7 +110,53 @@ export const ecommerceApi = baseApi.injectEndpoints({
         url: `/categories/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Category", "Dashboard"],
+      invalidatesTags: ["Category", "Dashboard", "Subcategory"],
+    }),
+
+    // ── Subcategories ──────────────────────────
+    getSubcategories: builder.query({
+      query: (params) => ({
+        url: "/subcategories",
+        method: "GET",
+        params,
+      }),
+      providesTags: ["Subcategory"],
+    }),
+    createSubcategory: builder.mutation({
+      query: (data) => ({
+        url: "/subcategories",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Subcategory", "Category", "Dashboard"],
+    }),
+    updateSubcategory: builder.mutation({
+      query: (data) => {
+        let id: string;
+        let body: any;
+        if (data instanceof FormData) {
+          id = data.get("id") as string;
+          data.delete("id");
+          body = data;
+        } else {
+          const { id: dataId, ...rest } = data;
+          id = dataId;
+          body = rest;
+        }
+        return {
+          url: `/subcategories/${id}`,
+          method: "PATCH",
+          body,
+        };
+      },
+      invalidatesTags: ["Subcategory", "Category", "Dashboard"],
+    }),
+    deleteSubcategory: builder.mutation({
+      query: (id: string) => ({
+        url: `/subcategories/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Subcategory", "Category", "Dashboard"],
     }),
 
     // ── Orders ────────────────────────────────
@@ -238,6 +284,10 @@ export const {
   useCreateCategoryMutation,
   useUpdateCategoryMutation,
   useDeleteCategoryMutation,
+  useGetSubcategoriesQuery,
+  useCreateSubcategoryMutation,
+  useUpdateSubcategoryMutation,
+  useDeleteSubcategoryMutation,
   useCreateOrderMutation,
   useGetMyOrdersQuery,
   useGetAllOrdersQuery,

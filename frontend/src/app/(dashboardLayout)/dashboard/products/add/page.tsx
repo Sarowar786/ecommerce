@@ -48,6 +48,7 @@ const productSchema = z.object({
   productName: z.string().min(2, "Product name must be at least 2 characters"),
   brand: z.string().min(1, "Brand name is required"),
   categoryId: z.string().min(1, "Please select a category"),
+  subcategoryId: z.string().optional(),
   price: z
     .string()
     .min(1, "Price is required")
@@ -141,6 +142,7 @@ export default function AddOrEditProductPage() {
       productName: "",
       brand: "",
       categoryId: "",
+      subcategoryId: "",
       price: "",
       discountPercentage: "0",
       deliveryTimeline: "2-3 business days",
@@ -179,6 +181,13 @@ export default function AddOrEditProductPage() {
     (sum, v) => sum + (Number(v?.stock) || 0),
     0,
   );
+
+  const selectedCategoryId = watch("categoryId");
+  const selectedCategoryDoc = categories.find(
+    (c: any) => c.id === selectedCategoryId
+  );
+  const availableSubcategories: any[] =
+    selectedCategoryDoc?.subcategories || [];
 
   // Pre-fill form in edit mode
   useEffect(() => {
@@ -220,6 +229,7 @@ export default function AddOrEditProductPage() {
         productName: existingProduct.title || existingProduct.productName || "",
         brand: existingProduct.brand || "",
         categoryId: existingProduct.categoryId || "",
+        subcategoryId: existingProduct.subcategoryId || "",
         price: String(existingProduct.price ?? ""),
         discountPercentage: String(existingProduct.discountPercentage ?? 0),
         deliveryTimeline:
@@ -375,6 +385,19 @@ export default function AddOrEditProductPage() {
       formData.append("title", data.productName);
       formData.append("brand", data.brand);
       formData.append("categoryId", data.categoryId);
+      const matchedCat = categories.find((c: any) => c.id === data.categoryId);
+      if (matchedCat) {
+        formData.append("category", matchedCat.name);
+      }
+      if (data.subcategoryId) {
+        formData.append("subcategoryId", data.subcategoryId);
+        const matchedSub = availableSubcategories.find(
+          (s: any) => s.id === data.subcategoryId
+        );
+        if (matchedSub) {
+          formData.append("subcategory", matchedSub.name);
+        }
+      }
       formData.append("price", data.price);
       formData.append("discountPercentage", data.discountPercentage || "0");
       formData.append("deliveryTimeline", data.deliveryTimeline);
@@ -572,6 +595,41 @@ export default function AddOrEditProductPage() {
                 {errors.categoryId && (
                   <p className="text-xs text-red-500 font-medium">
                     {errors.categoryId.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Subcategory */}
+              <div className="space-y-1.5">
+                <Label className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1">
+                  Subcategory{" "}
+                  <span className="text-slate-400 font-normal text-[11px]">
+                    (Optional)
+                  </span>
+                </Label>
+                <Select
+                  className="h-11 rounded-xl border-slate-200 text-sm disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed"
+                  disabled={
+                    !selectedCategoryId || availableSubcategories.length === 0
+                  }
+                  {...register("subcategoryId")}
+                >
+                  <option value="">
+                    {!selectedCategoryId
+                      ? "Select Category first"
+                      : availableSubcategories.length === 0
+                      ? "No subcategories for this category"
+                      : "Select a Subcategory"}
+                  </option>
+                  {availableSubcategories.map((sub: any) => (
+                    <option key={sub.id} value={sub.id}>
+                      {sub.name}
+                    </option>
+                  ))}
+                </Select>
+                {selectedCategoryId && availableSubcategories.length > 0 && (
+                  <p className="text-[11px] text-slate-500 font-medium">
+                    {availableSubcategories.length} subcategory option(s) available
                   </p>
                 )}
               </div>

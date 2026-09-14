@@ -14,6 +14,8 @@ import { RotateCcw, SlidersHorizontal } from "lucide-react";
 
 export type FilterState = {
   categoryId: string;
+  subcategoryId?: string;
+  subcategory?: string;
   min_price: string;
   max_price: string;
   sortby: string;
@@ -44,9 +46,9 @@ const RATING_OPTIONS = [
 ];
 
 const PRICE_PRESETS = [
-  { label: "$0 – $50", min: "0", max: "50" },
-  { label: "$50 – $200", min: "50", max: "200" },
-  { label: "$200 – $500", min: "200", max: "500" },
+  { label: "Under $50", min: "0", max: "50" },
+  { label: "$50 – $100", min: "50", max: "100" },
+  { label: "$100 – $500", min: "100", max: "500" },
   { label: "$500 – $1500", min: "500", max: "1500" },
 ];
 
@@ -100,7 +102,7 @@ export default function ProductPageSidebar({
         defaultValue={["category", "price-range", "sort-by", "rating"]}
         className="w-full"
       >
-        {/* Categories */}
+        {/* Categories & Subcategories */}
         <AccordionItem
           value="category"
           className="border-b border-slate-100 py-1"
@@ -111,7 +113,7 @@ export default function ProductPageSidebar({
           <AccordionContent className="flex flex-col gap-1.5 pt-1 pb-3">
             {/* All option */}
             <button
-              onClick={() => onFilterChange({ categoryId: "" })}
+              onClick={() => onFilterChange({ categoryId: "", subcategory: "" })}
               className={cn(
                 "text-left text-xs font-medium px-3 py-2 rounded-xl transition-all cursor-pointer",
                 filters.categoryId === ""
@@ -134,35 +136,94 @@ export default function ProductPageSidebar({
                   Boolean(cat.slug) &&
                   filters.categoryId.toLowerCase() === cat.slug.toLowerCase());
 
+              const subcategories: any[] = cat.subcategories || [];
+
               return (
-                <button
-                  key={cat.id || catName}
-                  onClick={() =>
-                    onFilterChange({
-                      categoryId: isSelected ? "" : cat.slug || catName,
-                    })
-                  }
-                  className={cn(
-                    "text-left text-xs font-medium px-3 py-2 rounded-xl transition-all flex items-center justify-between cursor-pointer",
-                    isSelected
-                      ? "bg-black text-white shadow-xs font-semibold"
-                      : "text-slate-600 hover:bg-slate-100",
+                <div key={cat.id || catName} className="flex flex-col gap-1">
+                  <button
+                    onClick={() =>
+                      onFilterChange({
+                        categoryId: isSelected ? "" : cat.slug || catName,
+                        subcategory: "",
+                      })
+                    }
+                    className={cn(
+                      "text-left text-xs font-medium px-3 py-2 rounded-xl transition-all flex items-center justify-between cursor-pointer",
+                      isSelected
+                        ? "bg-black text-white shadow-xs font-semibold"
+                        : "text-slate-600 hover:bg-slate-100",
+                    )}
+                  >
+                    <span className="truncate">{catName}</span>
+                    {cat.productsCount !== undefined && (
+                      <span
+                        className={cn(
+                          "text-[10px] px-1.5 py-0.5 rounded-md",
+                          isSelected
+                            ? "bg-white/20 text-white"
+                            : "bg-slate-100 text-slate-500",
+                        )}
+                      >
+                        {cat.productsCount}
+                      </span>
+                    )}
+                  </button>
+
+                  {/* Subcategories (visible when category is selected) */}
+                  {isSelected && subcategories.length > 0 && (
+                    <div className="ml-3 pl-2.5 border-l-2 border-slate-200 flex flex-col gap-1 py-1">
+                      {subcategories.map((sub: any) => {
+                        const subName = sub.name || "";
+                        const isSubSelected =
+                          filters.subcategory === subName ||
+                          filters.subcategory === sub.id ||
+                          filters.subcategory === sub.slug ||
+                          (Boolean(filters.subcategory) &&
+                            Boolean(subName) &&
+                            filters.subcategory?.toLowerCase() ===
+                              subName.toLowerCase()) ||
+                          (Boolean(filters.subcategory) &&
+                            Boolean(sub.slug) &&
+                            filters.subcategory?.toLowerCase() ===
+                              sub.slug.toLowerCase());
+
+                        return (
+                          <button
+                            key={sub.id || subName}
+                            onClick={() =>
+                              onFilterChange({
+                                categoryId: cat.slug || catName,
+                                subcategory: isSubSelected
+                                  ? ""
+                                  : sub.slug || subName,
+                              })
+                            }
+                            className={cn(
+                              "text-left text-[11px] font-medium px-2.5 py-1.5 rounded-lg transition-all flex items-center justify-between cursor-pointer",
+                              isSubSelected
+                                ? "bg-slate-900 text-white font-semibold shadow-2xs"
+                                : "text-slate-500 hover:text-slate-900 hover:bg-slate-100/80"
+                            )}
+                          >
+                            <span className="truncate">• {subName}</span>
+                            {sub.productsCount !== undefined && (
+                              <span
+                                className={cn(
+                                  "text-[10px]",
+                                  isSubSelected
+                                    ? "text-white/70"
+                                    : "text-slate-400"
+                                )}
+                              >
+                                {sub.productsCount}
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
                   )}
-                >
-                  <span className="truncate">{catName}</span>
-                  {cat.productsCount !== undefined && (
-                    <span
-                      className={cn(
-                        "text-[10px] px-1.5 py-0.5 rounded-md",
-                        isSelected
-                          ? "bg-white/20 text-white"
-                          : "bg-slate-100 text-slate-500",
-                      )}
-                    >
-                      {cat.productsCount}
-                    </span>
-                  )}
-                </button>
+                </div>
               );
             })}
           </AccordionContent>

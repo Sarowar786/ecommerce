@@ -3,6 +3,7 @@ import express from "express";
 import { AuthRoutes } from "../modules/Auth/auth.routes";
 import { UserRoutes } from "../modules/User/user.route";
 import { CategoryRoutes } from "../modules/Category/category.route";
+import { SubcategoryRoutes } from "../modules/Subcategory/subcategory.route";
 import { ProductRoutes } from "../modules/Product/product.route";
 import { OrderRoutes } from "../modules/Order/order.route";
 import { DashboardRoutes } from "../modules/Dashboard/dashboard.route";
@@ -23,6 +24,10 @@ const moduleRoutes = [
   {
     path: "/categories",
     route: CategoryRoutes,
+  },
+  {
+    path: "/subcategories",
+    route: SubcategoryRoutes,
   },
   {
     path: "/products",
