@@ -349,7 +349,7 @@ const refreshToken = async (token: string, res: any) => {
 
   const user = await prisma.user.findUnique({
     where: { id: decoded.id },
-    select: { id: true, role: true, status: true, isDeleted: true },
+    select: { id: true, email: true, name: true, role: true, status: true, isDeleted: true },
   });
 
   if (!user || user.isDeleted || user.status === "BLOCKED") {

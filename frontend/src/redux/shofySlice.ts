@@ -1,5 +1,6 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ProductType } from "../../type";
+import { logout } from "./features/authSlice";
 
 interface InitialState {
   cart: ProductType[];
@@ -17,14 +18,31 @@ export const shofySlice = createSlice({
   name: "shofy",
   initialState,
   reducers: {
+    setCart: (state, action: PayloadAction<ProductType[]>) => {
+      state.cart = action.payload || [];
+    },
+    setFavoriteProduct: (state, action: PayloadAction<ProductType[]>) => {
+      state.favoriteProduct = action.payload || [];
+    },
+    resetCart: (state) => {
+      state.cart = [];
+    },
+    resetFavoriteProduct: (state) => {
+      state.favoriteProduct = [];
+    },
+    clearShofy: (state) => {
+      state.cart = [];
+      state.favoriteProduct = [];
+      state.userInfo = null;
+    },
     addToCart: (state, action) => {
       const existingProduct = state?.cart?.find(
         (item) => item?.id === action.payload?.id
       );
       if (existingProduct) {
-        existingProduct.quantity! += 1;
+        existingProduct.quantity = (existingProduct.quantity || 1) + (action.payload?.quantity || 1);
       } else {
-        state.cart.push({ ...action.payload, quantity: 1 });
+        state.cart.push({ ...action.payload, quantity: action.payload?.quantity || 1 });
       }
     },
     increaseQuantity: (state, action) => {
@@ -32,15 +50,15 @@ export const shofySlice = createSlice({
         (item) => item?.id === action.payload
       );
       if (existingProduct) {
-        existingProduct.quantity! += 1;
+        existingProduct.quantity = (existingProduct.quantity || 1) + 1;
       }
     },
     decreaseQuantity: (state, action) => {
       const existingProduct = state?.cart?.find(
         (item) => item?.id === action.payload
       );
-      if (existingProduct) {
-        existingProduct.quantity! -= 1;
+      if (existingProduct && (existingProduct.quantity || 1) > 1) {
+        existingProduct.quantity = (existingProduct.quantity || 1) - 1;
       }
     },
     removeFromCart: (state, action) => {
@@ -65,8 +83,21 @@ export const shofySlice = createSlice({
       }
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(logout, (state) => {
+      state.cart = [];
+      state.favoriteProduct = [];
+      state.userInfo = null;
+    });
+  },
 });
+
 export const {
+  setCart,
+  setFavoriteProduct,
+  resetCart,
+  resetFavoriteProduct,
+  clearShofy,
   addToCart,
   addUser,
   removeUser,
@@ -75,4 +106,5 @@ export const {
   removeFromCart,
   addToFavorite,
 } = shofySlice.actions;
+
 export default shofySlice.reducer;

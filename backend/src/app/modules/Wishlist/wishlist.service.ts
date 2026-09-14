@@ -2,7 +2,13 @@ import httpStatus from "http-status";
 import prisma from "../../../shared/prisma";
 import ApiError from "../../../errors/ApiErrors";
 
+const isValidObjectId = (id: string) => /^[0-9a-fA-F]{24}$/.test(id);
+
 const toggleWishlist = async (userId: string, productId: string) => {
+  if (!productId || !isValidObjectId(productId)) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Product not found");
+  }
+
   const product = await prisma.product.findUnique({
     where: { id: productId },
   });
@@ -62,6 +68,10 @@ const getMyWishlist = async (userId: string) => {
 };
 
 const removeWishlistItem = async (userId: string, productId: string) => {
+  if (!productId || !isValidObjectId(productId)) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Wishlist item not found");
+  }
+
   const existing = await prisma.wishlistItem.findFirst({
     where: {
       userId,

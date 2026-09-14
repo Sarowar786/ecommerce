@@ -31,11 +31,14 @@ const auth = (...roles: string[]) => {
       const verifiedUser = jwtHelpers.verifyToken(
         token,
         env.JWT_SECRET as Secret
-      );
+      ) as any;
 
-      const user = await prisma.user.findUnique({
+      const user = await prisma.user.findFirst({
         where: {
-          email: verifiedUser.email,
+          OR: [
+            ...(verifiedUser.email ? [{ email: verifiedUser.email }] : []),
+            ...(verifiedUser.id ? [{ id: verifiedUser.id }] : []),
+          ],
         },
       });
 
@@ -49,14 +52,19 @@ const auth = (...roles: string[]) => {
         throw new ApiError(httpStatus.FORBIDDEN, "This user is blocked ! !");
       }
 
-      if (roles.length && !roles.includes(verifiedUser.role)) {
+      const userRole = user.role || verifiedUser.role;
+      if (roles.length && !roles.includes(userRole)) {
         throw new ApiError(
           httpStatus.FORBIDDEN,
-          `Forbidden! Your role ${verifiedUser.role.toLowerCase()} is not allowed to access this route..!!`
+          `Forbidden! Your role ${String(userRole).toLowerCase()} is not allowed to access this route..!!`
         );
       }
 
-      req.user = verifiedUser;
+      req.user = {
+        ...verifiedUser,
+        ...user,
+        id: user.id,
+      };
 
       next();
     } catch (err) {

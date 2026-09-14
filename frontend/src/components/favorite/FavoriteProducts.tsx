@@ -13,7 +13,8 @@ import { addToFavorite } from "@/redux/shofySlice";
 import { RootState } from "@/redux/store";
 import { useToggleWishlistMutation } from "@/redux/api/ecommerceApi";
 import toast from "react-hot-toast";
-import { Heart, ShoppingBag } from "lucide-react";
+import { Heart, ShoppingBag, LogIn } from "lucide-react";
+import { useGetMyWishlistQuery } from "@/redux/api/ecommerceApi";
 
 const FavoriteProducts = () => {
   const dispatch = useDispatch();
@@ -21,6 +22,7 @@ const FavoriteProducts = () => {
   const { favoriteProduct } = useSelector(
     (state: StateType) => state?.shopy || { favoriteProduct: [] }
   );
+  const { isLoading } = useGetMyWishlistQuery(undefined, { skip: !token });
   const [toggleWishlist] = useToggleWishlistMutation();
 
   const handleRemove = async (product: ProductType) => {
@@ -35,6 +37,41 @@ const FavoriteProducts = () => {
       }
     }
   };
+
+  if (token && isLoading && (!favoriteProduct || favoriteProduct.length === 0)) {
+    return (
+      <Container className="py-10">
+        <div className="bg-white h-96 my-10 flex flex-col gap-4 items-center justify-center py-5 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="h-10 w-10 border-4 border-red-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm font-semibold text-slate-500">Loading your wishlist...</p>
+        </div>
+      </Container>
+    );
+  }
+
+  if (!token) {
+    return (
+      <Container className="py-10">
+        <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center max-w-md mx-auto shadow-sm my-12">
+          <div className="w-16 h-16 bg-slate-100 text-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+            <LogIn className="w-8 h-8" />
+          </div>
+          <h2 className="text-xl font-bold text-slate-900 mb-2">
+            Please Sign In
+          </h2>
+          <p className="text-sm text-slate-500 mb-6">
+            Sign in to your account to view and manage your saved wishlist items.
+          </p>
+          <Link
+            href="/login?callbackUrl=/favorite"
+            className="inline-flex items-center justify-center gap-2 bg-slate-950 hover:bg-amber-500 hover:text-slate-950 text-white font-semibold text-sm px-6 py-3 rounded-full transition-all duration-200 shadow-sm"
+          >
+            Sign In Now
+          </Link>
+        </div>
+      </Container>
+    );
+  }
 
   return (
     <Container className="py-10">

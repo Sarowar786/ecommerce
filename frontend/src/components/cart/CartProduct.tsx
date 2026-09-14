@@ -39,8 +39,8 @@ const CartProduct = ({ product }: { product: ProductType }) => {
         className="h-24 w-24 sm:h-48 sm:w-48 border border-skyColor/30 hover:border-skyColor overflow-hidden flex items-center justify-center rounded-md"
       >
         <Image
-          src={product?.images[0]}
-          alt="productImage"
+          src={product?.images?.[0] || product?.thumbnail || "/images/logonav.png"}
+          alt={product?.title || "productImage"}
           width={300}
           height={300}
           className="h-full w-full p-2 rounded-md object-contain bg-[#f7f7f7] hover:scale-110 duration-200"

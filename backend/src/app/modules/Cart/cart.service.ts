@@ -2,6 +2,8 @@ import httpStatus from "http-status";
 import prisma from "../../../shared/prisma";
 import ApiError from "../../../errors/ApiErrors";
 
+const isValidObjectId = (id: string) => /^[0-9a-fA-F]{24}$/.test(id);
+
 const addToCart = async (
   userId: string,
   payload: {
@@ -11,6 +13,10 @@ const addToCart = async (
     size?: string;
   }
 ) => {
+  if (!payload.productId || !isValidObjectId(payload.productId)) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Product not found");
+  }
+
   const product = await prisma.product.findUnique({
     where: { id: payload.productId },
   });
@@ -91,6 +97,10 @@ const updateCartQuantity = async (
   cartItemId: string,
   quantity: number
 ) => {
+  if (!cartItemId || !isValidObjectId(cartItemId)) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Cart item not found");
+  }
+
   const item = await prisma.cartItem.findFirst({
     where: {
       userId,
@@ -114,6 +124,10 @@ const updateCartQuantity = async (
 };
 
 const removeCartItem = async (userId: string, cartItemId: string) => {
+  if (!cartItemId || !isValidObjectId(cartItemId)) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Cart item not found");
+  }
+
   const item = await prisma.cartItem.findFirst({
     where: {
       userId,

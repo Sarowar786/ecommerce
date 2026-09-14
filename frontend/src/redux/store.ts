@@ -27,7 +27,7 @@ const persistConfig = {
     typeof window !== "undefined" && window.localStorage
       ? storage
       : noopStorage,
-  whitelist: ["auth"],
+  whitelist: ["auth", "shopy"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
