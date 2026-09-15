@@ -96,7 +96,7 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="w-full bg-slate-950 text-slate-300 relative overflow-hidden border-t border-slate-800">
+    <footer id="contact" className="w-full bg-slate-950 text-slate-300 relative overflow-hidden border-t border-slate-800">
       {/* Decorative subtle background ambient glows */}
       <div className="absolute -top-40 -left-40 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute top-1/2 -right-40 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />

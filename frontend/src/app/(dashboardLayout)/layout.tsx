@@ -11,7 +11,6 @@ import {
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import Cookies from "js-cookie";
 
 export default function DashboardLayout({
@@ -59,27 +58,17 @@ export default function DashboardLayout({
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5 sm:gap-4">
-            <Link
-              href="/"
-              className="text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 transition shrink-0"
-              target="_blank"
-            >
-              Live Store ↗
-            </Link>
-
-            <div className="flex items-center gap-2.5 sm:gap-3 pl-2 sm:pl-3 border-l border-slate-200">
-              <div className="h-8 w-8 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs font-bold uppercase shrink-0">
-                {user?.name ? user.name[0] : "A"}
-              </div>
-              <div className="hidden md:flex flex-col text-left min-w-0">
-                <span className="text-xs font-bold text-slate-900 leading-tight truncate">
-                  {user?.name || "Administrator"}
-                </span>
-                <span className="text-[10px] text-slate-400 truncate">
-                  {user?.email || "sarowar2287@gmail.com"}
-                </span>
-              </div>
+          <div className="flex items-center gap-2.5 sm:gap-3 pl-2 sm:pl-3">
+            <div className="h-8 w-8 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs font-bold uppercase shrink-0">
+              {user?.name ? user.name[0] : "A"}
+            </div>
+            <div className="hidden md:flex flex-col text-left min-w-0">
+              <span className="text-xs font-bold text-slate-900 leading-tight truncate">
+                {user?.name || "Administrator"}
+              </span>
+              <span className="text-[10px] text-slate-400 truncate">
+                {user?.email || "sarowar2287@gmail.com"}
+              </span>
             </div>
           </div>
         </header>
