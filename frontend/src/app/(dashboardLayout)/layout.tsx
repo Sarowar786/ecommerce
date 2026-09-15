@@ -44,39 +44,39 @@ export default function DashboardLayout({
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-slate-200/80 bg-white/80 backdrop-blur-md px-6">
-          <div className="flex items-center gap-3">
+        <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-slate-200/80 bg-white/80 backdrop-blur-md px-4 sm:px-6">
+          <div className="flex items-center gap-2.5 sm:gap-3">
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="h-5 bg-slate-200" />
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2">
               <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
                 Portal
               </span>
               <span className="text-slate-300">/</span>
-              <span className="text-sm font-bold text-slate-900">
+              <span className="text-sm font-bold text-slate-900 truncate">
                 Admin Center
               </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2.5 sm:gap-4">
             <Link
               href="/"
-              className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 transition"
+              className="text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 transition shrink-0"
               target="_blank"
             >
               Live Store ↗
             </Link>
 
-            <div className="flex items-center gap-3 pl-3 border-l border-slate-200">
-              <div className="h-8 w-8 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs font-bold uppercase">
+            <div className="flex items-center gap-2.5 sm:gap-3 pl-2 sm:pl-3 border-l border-slate-200">
+              <div className="h-8 w-8 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs font-bold uppercase shrink-0">
                 {user?.name ? user.name[0] : "A"}
               </div>
-              <div className="hidden md:flex flex-col text-left">
-                <span className="text-xs font-bold text-slate-900 leading-tight">
+              <div className="hidden md:flex flex-col text-left min-w-0">
+                <span className="text-xs font-bold text-slate-900 leading-tight truncate">
                   {user?.name || "Administrator"}
                 </span>
-                <span className="text-[10px] text-slate-400">
+                <span className="text-[10px] text-slate-400 truncate">
                   {user?.email || "sarowar2287@gmail.com"}
                 </span>
               </div>
@@ -84,7 +84,7 @@ export default function DashboardLayout({
           </div>
         </header>
 
-        <main className="flex-1 p-6 md:p-8 space-y-8">
+        <main className="flex-1 p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 w-full max-w-full overflow-x-hidden">
           {children}
         </main>
       </SidebarInset>

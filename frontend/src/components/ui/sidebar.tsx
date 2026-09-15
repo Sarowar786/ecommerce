@@ -4,14 +4,24 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { PanelLeft } from "lucide-react";
 
-const SidebarContext = React.createContext<{
+interface SidebarContextValue {
   open: boolean;
-  setOpen: (open: boolean) => void;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  openMobile: boolean;
+  setOpenMobile: React.Dispatch<React.SetStateAction<boolean>>;
+  isMobile: boolean;
   toggleSidebar: () => void;
-}>({
+  closeMobile: () => void;
+}
+
+const SidebarContext = React.createContext<SidebarContextValue>({
   open: true,
   setOpen: () => {},
+  openMobile: false,
+  setOpenMobile: () => {},
+  isMobile: false,
   toggleSidebar: () => {},
+  closeMobile: () => {},
 });
 
 export function useSidebar() {
@@ -26,11 +36,45 @@ export function SidebarProvider({
   defaultOpen?: boolean;
 }) {
   const [open, setOpen] = React.useState(defaultOpen);
-  const toggleSidebar = () => setOpen((prev) => !prev);
+  const [openMobile, setOpenMobile] = React.useState(false);
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (!mobile) {
+        setOpenMobile(false);
+      }
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  const toggleSidebar = () => {
+    if (isMobile) {
+      setOpenMobile((prev) => !prev);
+    } else {
+      setOpen((prev) => !prev);
+    }
+  };
+
+  const closeMobile = () => setOpenMobile(false);
 
   return (
-    <SidebarContext.Provider value={{ open, setOpen, toggleSidebar }}>
-      <div className="flex min-h-screen w-full bg-gray-50/50">
+    <SidebarContext.Provider
+      value={{
+        open,
+        setOpen,
+        openMobile,
+        setOpenMobile,
+        isMobile,
+        toggleSidebar,
+        closeMobile,
+      }}
+    >
+      <div className="flex min-h-screen w-full bg-gray-50/50 relative">
         {children}
       </div>
     </SidebarContext.Provider>
@@ -43,9 +87,11 @@ export function SidebarTrigger({ className }: { className?: string }) {
     <button
       onClick={toggleSidebar}
       className={cn(
-        "inline-flex items-center justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition",
+        "inline-flex items-center justify-center rounded-xl p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition",
         className
       )}
+      title="Toggle Sidebar"
+      aria-label="Toggle Sidebar"
     >
       <PanelLeft className="h-5 w-5" />
       <span className="sr-only">Toggle Sidebar</span>
@@ -74,17 +120,37 @@ export function Sidebar({
   children?: React.ReactNode;
   className?: string;
 }) {
-  const { open } = useSidebar();
+  const { open, openMobile, isMobile, setOpenMobile } = useSidebar();
+
   return (
-    <aside
-      className={cn(
-        "flex flex-col border-r border-gray-200 bg-white transition-all duration-300 ease-in-out shrink-0 sticky top-0 h-screen",
-        open ? "w-64" : "w-0 md:w-16 overflow-hidden",
-        className
+    <>
+      {/* Mobile backdrop overlay */}
+      {isMobile && openMobile && (
+        <div
+          onClick={() => setOpenMobile(false)}
+          className="fixed inset-0 z-40 bg-slate-950/60 backdrop-blur-xs transition-opacity duration-300 md:hidden"
+          aria-hidden="true"
+        />
       )}
-    >
-      {children}
-    </aside>
+
+      <aside
+        className={cn(
+          "flex flex-col border-r border-gray-200 bg-white transition-all duration-300 ease-in-out shrink-0 sticky top-0 h-screen",
+          isMobile
+            ? cn(
+                "fixed inset-y-0 left-0 z-50 w-72 shadow-2xl",
+                openMobile ? "translate-x-0" : "-translate-x-full"
+              )
+            : cn(
+                "relative z-20",
+                open ? "w-64" : "w-[72px]"
+              ),
+          className
+        )}
+      >
+        {children}
+      </aside>
+    </>
   );
 }
 
@@ -96,7 +162,7 @@ export function SidebarHeader({
   className?: string;
 }) {
   return (
-    <div className={cn("border-b border-gray-100 p-4", className)}>
+    <div className={cn("border-b border-gray-100 p-4 shrink-0", className)}>
       {children}
     </div>
   );
@@ -110,7 +176,7 @@ export function SidebarContent({
   className?: string;
 }) {
   return (
-    <div className={cn("flex-1 overflow-y-auto p-3 space-y-4", className)}>
+    <div className={cn("flex-1 overflow-y-auto overflow-x-hidden p-3 space-y-4", className)}>
       {children}
     </div>
   );
@@ -136,7 +202,7 @@ export function SidebarGroupLabel({
   return (
     <div
       className={cn(
-        "px-3 text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2",
+        "px-3 text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2 truncate",
         className
       )}
     >
@@ -153,12 +219,24 @@ export function SidebarGroupContent({
   return <div className="space-y-1">{children}</div>;
 }
 
-export function SidebarMenu({ children }: { children: React.ReactNode }) {
-  return <ul className="space-y-1 list-none p-0 m-0">{children}</ul>;
+export function SidebarMenu({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return <ul className={cn("space-y-1 list-none p-0 m-0", className)}>{children}</ul>;
 }
 
-export function SidebarMenuItem({ children }: { children: React.ReactNode }) {
-  return <li>{children}</li>;
+export function SidebarMenuItem({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return <li className={cn("list-none", className)}>{children}</li>;
 }
 
 export function SidebarMenuButton({
@@ -193,7 +271,7 @@ export function SidebarFooter({
   className?: string;
 }) {
   return (
-    <div className={cn("border-t border-gray-100 p-3 mt-auto", className)}>
+    <div className={cn("border-t border-gray-100 p-3 mt-auto shrink-0", className)}>
       {children}
     </div>
   );

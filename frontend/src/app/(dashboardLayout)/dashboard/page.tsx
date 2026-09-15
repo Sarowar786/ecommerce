@@ -74,7 +74,7 @@ export default function Overview() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <Link href="/dashboard/products">
+          <Link href="/dashboard/products/add">
             <Button className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl shadow-lg shadow-amber-500/20 flex items-center gap-2 h-10 px-4">
               <Plus className="h-4 w-4" />
               Add Product
